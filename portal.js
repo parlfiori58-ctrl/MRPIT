@@ -187,7 +187,7 @@ function pageLayout(title, body, active = "dashboard", user = "Dipartimento") {
     a{color:inherit}.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;padding:20px 16px;border-right:1px solid #c7b9a5;background:linear-gradient(180deg,#4b3527 0%,#3a2a20 100%);display:flex;flex-direction:column;box-shadow:8px 0 28px rgba(56,39,27,.12)}
     .brand{display:flex;gap:12px;align-items:center;padding:9px 8px 24px;border-bottom:1px solid rgba(255,244,220,.18);margin-bottom:16px}.crest-group{display:flex;align-items:center;gap:6px}.crest-secondary{width:42px;height:42px;border-radius:10px;object-fit:cover;border:2px solid rgba(255,245,220,.55);box-shadow:0 8px 20px rgba(0,0,0,.24)}.crest{width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;border:2px solid rgba(255,245,220,.65);box-shadow:0 10px 24px rgba(0,0,0,.25)}.brand strong{font-size:15px;letter-spacing:.07em;color:#fff8eb}.brand small{display:block;color:#d8c9b5;margin-top:4px}
     .nav{display:grid;gap:5px}.nav-item{display:flex;align-items:center;gap:12px;text-decoration:none;color:#d8c9b5;padding:12px 13px;border-radius:8px;border:1px solid transparent;transition:.18s}.nav-item:hover{color:#fff8eb;background:rgba(255,245,220,.08)}.nav-item.active{color:#fff;background:linear-gradient(90deg,rgba(178,138,67,.42),rgba(178,138,67,.12));border-color:rgba(223,191,129,.36);box-shadow:inset 3px 0 0 #d0a75b}.nav-icon{width:26px;text-align:center;font-size:17px}
-    .sidebar-bottom{margin-top:auto}.userbox{border:1px solid rgba(255,245,220,.18);background:rgba(255,255,255,.06);border-radius:9px;padding:13px;color:#fff8eb}.userbox small{color:#cdbda9}.logout{display:block;margin-top:10px;text-decoration:none;color:#e8b7a8;font-size:13px}
+    .portal-switch{display:grid;gap:6px;margin:0 0 16px;padding-bottom:15px;border-bottom:1px solid rgba(255,244,220,.18)}.switch-item{display:flex;align-items:center;gap:10px;text-decoration:none;color:#d8c9b5;padding:10px 11px;border-radius:8px;border:1px solid rgba(255,245,220,.12);background:rgba(255,255,255,.035)}.switch-item span:first-child{font-size:18px}.switch-item b{display:block;font-size:12px}.switch-item small{display:block;color:#b9a995;font-size:10px;margin-top:2px}.switch-item.selected{background:rgba(208,167,91,.2);border-color:rgba(223,191,129,.4);color:#fff8eb}.sidebar-bottom{margin-top:auto}.userbox{border:1px solid rgba(255,245,220,.18);background:rgba(255,255,255,.06);border-radius:9px;padding:13px;color:#fff8eb}.userbox small{color:#cdbda9}.logout{display:block;margin-top:10px;text-decoration:none;color:#e8b7a8;font-size:13px}
     .content{min-width:0;padding:26px 30px 55px;position:relative}.content:before{content:"MPRP • DEPARTMENT SERVICES";display:block;color:#9a8b78;font-size:10px;letter-spacing:.16em;font-weight:800;margin-bottom:12px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px;padding-bottom:18px;border-bottom:3px solid var(--brown)}.topbar h1{font-size:clamp(26px,4vw,43px);margin:0;letter-spacing:-.03em;color:#2f261f}.topbar p{color:var(--muted);margin:7px 0 0}.live{display:flex;align-items:center;gap:8px;border:1px solid #c8b58f;background:#f5eddb;color:#5f4d32;padding:9px 13px;border-radius:6px;white-space:nowrap;font-weight:700}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(63,109,77,.11)}
     .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}.card{background:linear-gradient(180deg,rgba(255,253,248,.98),rgba(248,244,236,.98));border:1px solid var(--line);border-radius:8px;padding:19px;box-shadow:var(--shadow)}.span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
     .stat-card{position:relative;overflow:hidden}.stat-card:after{content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-35px;top:-38px;background:radial-gradient(circle,rgba(77,152,255,.25),transparent 70%)}.label{color:var(--muted);font-size:13px}.stat{font-size:37px;font-weight:850;margin-top:7px;letter-spacing:-.03em}.accent-blue{color:#80b8ff}.accent-green{color:#74e6b5}.accent-red{color:#ff8c97}.accent-yellow{color:#f8dc8c}.accent-purple{color:#c4a6ff}
@@ -196,6 +196,7 @@ function pageLayout(title, body, active = "dashboard", user = "Dipartimento") {
     table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line);vertical-align:middle}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.table-wrap{overflow:auto}.status{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}.ok{color:#7ce8b9;background:rgba(56,217,150,.12)}.bad{color:#ff9da6;background:#f6e8e4}.warn{color:#ffe09b;background:rgba(247,201,93,.12)}
     .kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kv div{border:1px solid var(--line);background:#f6f1e8;border-radius:12px;padding:12px}.kv small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}.record{border:1px solid var(--line);background:#f6f1e8;border-radius:14px;padding:14px;margin-bottom:10px}.record h3{margin:0 0 8px;font-size:16px}.record p{margin:5px 0;color:#443a31}.empty{text-align:center;color:var(--muted);padding:28px;border:1px dashed var(--line);border-radius:13px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.mobile-head{display:none}
     .donut{width:160px;height:160px;border-radius:50%;display:grid;place-items:center;margin:auto;background:conic-gradient(var(--green) 0 var(--paid),var(--red) var(--paid) 100%);position:relative}.donut:after{content:"";position:absolute;inset:22px;border-radius:50%;background:#fffdf8}.donut-center{position:relative;z-index:2;text-align:center}.donut-center strong{font-size:27px;display:block}
+    .doj-theme .topbar{border-bottom-color:#243447}.doj-theme .button{background:linear-gradient(135deg,#27384a,#172433)}.doj-theme .button.secondary{background:#f1eee7;color:#2b3745;border-color:#cfc6b8}.doj-theme .accent-blue{color:#2f4b68}.doj-theme .accent-red{color:#8a3f42}.doj-theme .accent-yellow{color:#8c6a2e}.doj-theme .accent-green{color:#3c654d}.doj-theme .card{border-top:3px solid #243447}.doj-theme .record h3{color:#263748}
     @media(max-width:980px){body{padding-bottom:env(safe-area-inset-bottom)}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.shell{grid-template-columns:1fr}.sidebar{position:fixed;left:-290px;top:0;z-index:80;width:min(285px,86vw);height:100dvh;transition:left .22s ease;padding-top:calc(20px + env(safe-area-inset-top));box-shadow:20px 0 60px rgba(0,0,0,.5)}.sidebar.open{left:0}.content{padding:calc(12px + env(safe-area-inset-top)) 13px calc(34px + env(safe-area-inset-bottom))}.mobile-head{display:flex;position:sticky;top:0;z-index:40;align-items:center;justify-content:space-between;margin:-12px -13px 16px;padding:calc(10px + env(safe-area-inset-top)) 14px 11px;background:rgba(246,243,236,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}.mobile-brand{display:flex;align-items:center;gap:9px}.mobile-logo-group{display:flex;align-items:center;gap:5px}.mobile-logo-secondary{width:30px;height:30px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,.24)}.mobile-logo{width:38px;height:38px;border-radius:50%;object-fit:cover;border:1px solid rgba(128,184,255,.42)}.menu-btn{background:#fffdf8;border:1px solid var(--line);box-shadow:none;padding:10px 13px;font-size:18px}.span-3,.span-4,.span-5,.span-6,.span-7,.span-8{grid-column:span 12}.topbar{align-items:flex-start;flex-direction:column;margin-bottom:18px}.topbar h1{font-size:30px}.topbar .actions{width:100%}.topbar .actions .button{flex:1;min-width:135px}.kv{grid-template-columns:1fr}.search{display:grid;grid-template-columns:1fr}.input,select,.search button{width:100%;min-width:0}.card{box-shadow:0 12px 35px rgba(0,0,0,.22)}.table-wrap{margin-left:-4px;margin-right:-4px;-webkit-overflow-scrolling:touch}.table-wrap table{min-width:720px}.record{overflow-wrap:anywhere}}
     @media(max-width:560px){.grid{gap:11px}.card{padding:14px;border-radius:14px}.bar-row{grid-template-columns:82px minmax(0,1fr) 32px;gap:8px}.live{font-size:12px;max-width:100%;white-space:normal}.stat{font-size:32px}.section-head{align-items:flex-start}.actions{width:100%}.actions .button{width:100%}th,td{padding:10px 8px}.button,button{min-height:44px}.login{border-radius:20px!important;padding:22px!important}}
   </style>
@@ -203,7 +204,8 @@ function pageLayout(title, body, active = "dashboard", user = "Dipartimento") {
 <body>
 <div class="shell">
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><div class="crest-group"><img class="crest" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><div><strong>PORTALE DEI DIPARTIMENTI</strong><small>MPRP • Sistema informativo dei dipartimenti</small></div></div>
+    <div class="brand"><div class="crest-group"><img class="crest" src="/ced-iprp-logo.png" alt="MPRP"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="MPRP Patrol"></div><div><strong>PORTALE DEI DIPARTIMENTI</strong><small>MPRP • Sistema informativo</small></div></div>
+    <div class="portal-switch"><a href="/" class="switch-item ${String(active).startsWith("doj") ? "" : "selected"}"><span>🏛️</span><span><b>Dipartimenti</b><small>Servizi operativi</small></span></a><a href="/doj" class="switch-item ${String(active).startsWith("doj") ? "selected" : ""}"><span>⚖️</span><span><b>DOJ • Giustizia</b><small>Servizi giudiziari</small></span></a></div>
     <nav class="nav">${nav}</nav>
     <div class="sidebar-bottom"><div class="userbox"><small>Sessione attiva</small><strong style="display:block;margin-top:3px">${escapeHtml(user)}</strong><a class="logout" href="/logout">Esci dal portale</a></div></div>
   </aside>
@@ -225,6 +227,51 @@ function loginPage(message = "") {
   *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#e7e0d4,#f7f4ed);color:#241f1a;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.login{width:min(430px,100%);background:#fffdf8;border:1px solid #d4c8b6;border-radius:24px;padding:28px;box-shadow:0 24px 70px rgba(67,49,34,.16)}.crest{width:112px;height:112px;border-radius:50%;display:block;object-fit:cover;border:1px solid rgba(128,184,255,.48);box-shadow:0 18px 48px rgba(0,0,0,.42);margin:0 auto 18px}h1{margin:0;font-size:31px;letter-spacing:-.03em}p{color:#756b60;line-height:1.55}.field{margin-top:15px}label{display:block;color:#6f655b;font-size:13px;margin-bottom:7px}input{width:100%;border:1px solid #29466e;background:#fffdf8;color:white;border-radius:13px;padding:13px 14px;font:inherit;outline:none}input:focus{border-color:#8f7957;box-shadow:0 0 0 3px rgba(77,152,255,.1)}button{width:100%;margin-top:20px;border:0;border-radius:13px;padding:13px;background:linear-gradient(135deg,#5b4432,#3f2e22);color:white;font-weight:800;font-size:15px;cursor:pointer}.error{background:#f6e8e4;border:1px solid rgba(255,102,116,.3);color:#8b3e3e;padding:10px 12px;border-radius:11px;margin-top:15px}.foot{text-align:center;font-size:12px;color:#7088a9;margin-top:18px}</style></head><body><form class="login" method="post" action="/login"><div style="display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:18px"><img class="crest" style="margin:0" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="crest" style="width:82px;height:82px;margin:0;border-radius:14px" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><h1>Accesso riservato</h1><p>Portale dei dipartimenti MPRP.</p>${message ? `<div class="error">${escapeHtml(message)}</div>` : ""}<div class="field"><label>Nome utente</label><input name="username" autocomplete="username" required></div><div class="field"><label>Password</label><input type="password" name="password" autocomplete="current-password" required></div><button type="submit">Accedi al portale</button><div class="foot">Accesso riservato</div></form></body></html>`;
 }
 
+
+function dojLayout(title, body, active = "dashboard", user = "Giustizia") {
+  const dojNav = [
+    ["dashboard", "/doj", "Dashboard", "⌂"], ["casi", "/doj/casi", "Fascicoli e casi", "§"], ["mandati", "/doj/mandati", "Mandati", "◈"],
+    ["procura", "/doj/procura", "Procura", "⚖"], ["tribunale", "/doj/tribunale", "Tribunale", "▤"], ["vittime", "/doj/vittime", "Vittime e assistenza", "✚"],
+    ["documenti", "/doj/documenti", "Documenti legali", "▧"], ["audit", "/doj/audit", "Audit e controlli", "✓"]
+  ].map(([id, href, label, icon]) => `<a class="nav-item ${active === id ? "active" : ""}" href="${href}"><span class="nav-icon">${icon}</span><span>${label}</span></a>`).join("");
+  let html = pageLayout(title, body, active, user);
+  html = html.replace(/(<a href="\/doj" class="switch-item )([^"]*)/, "$1selected").replace(/(<a href="\/" class="switch-item )selected/, "$1");
+  html = html.replace(/<div class="brand">[\s\S]*?<\/div><div class="portal-switch">/, '<div class="brand"><div class="crest-group"><img class="crest" src="/ced-iprp-logo.png" alt="MPRP"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="MPRP Patrol"></div><div><strong>DOJ • GIUSTIZIA</strong><small>MPRP • Portale giudiziario</small></div></div><div class="portal-switch">');
+  html = html.replace(/<nav class="nav">[\s\S]*?<\/nav>/, `<nav class="nav">${dojNav}</nav>`);
+  html = html.replace(/<div class="content">/, '<div class="content doj-theme">');
+  return html;
+}
+function dojLoginPage(message = "") {
+  return loginPage(message)
+    .replace("Portale dei dipartimenti MPRP", "Portale DOJ • Giustizia MPRP")
+    .replace("Portale dei dipartimenti MPRP.", "Sistema giudiziario e legale MPRP.")
+    .replace("Accesso riservato", "Accesso • DOJ Giustizia");
+}
+
+function initDojDb(file) {
+  try {
+    const db = JSON.parse(fs.readFileSync(file, "utf8"));
+    db.casi ||= {};
+    db.mandati ||= {};
+    db.procure ||= {};
+    db.udienze ||= {};
+    db.vittime ||= {};
+    db.documenti ||= {};
+    db.audit ||= [];
+    return db;
+  } catch {
+    return { casi: {}, mandati: {}, procure: {}, udienze: {}, vittime: {}, documenti: {}, audit: [], ultimoAggiornamento: null };
+  }
+}
+
+function saveDojDb(file, db) {
+  db.ultimoAggiornamento = new Date().toISOString();
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = `${file}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(db, null, 2), "utf8");
+  fs.renameSync(tmp, file);
+}
+
 function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChannelId = null }) {
   const app = express();
   app.disable("x-powered-by");
@@ -242,6 +289,7 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
   const sessionSecret = process.env.PORTALE_SECRET || expectedPassword || crypto.randomBytes(32).toString("hex");
 
   const operationsDir = path.join(path.dirname(databaseFile), "operazioni-elaborate");
+  const dojDatabaseFile = path.join(path.dirname(databaseFile), "mprp_doj.json");
 
   const claimOperation = operationId => {
     if (!operationId || !/^[a-zA-Z0-9_-]{12,100}$/.test(String(operationId))) return false;
@@ -581,6 +629,82 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
     const rows = vehicles.map(v => `<tr><td class="mono">${escapeHtml(v.targa)}</td><td>${escapeHtml(v.modello)}</td><td>${escapeHtml(v.nome)} ${escapeHtml(v.cognome)}</td><td>${escapeHtml(v.colore)}</td><td>${v.assicurazione?.scadenza > Date.now() ? `<span class="status ok">${escapeHtml(v.assicurazione.piano)}</span>` : '<span class="status bad">Non assicurata</span>'}</td><td><a class="button" href="/cittadino/${encodeURIComponent(v.userId)}">Intestatario</a></td></tr>`).join("");
     const body = `<div class="topbar"><div><h1>Registro veicoli</h1><p>Controllo targhe, intestatari e assicurazioni.</p></div><div class="live">${vehicles.length} veicoli</div></div><div class="card"><form class="search"><input class="input" name="q" value="${escapeHtml(req.query.q || "")}" placeholder="Inserisci una targa"><button>Controlla</button></form><div class="table-wrap" style="margin-top:15px">${rows ? `<table><thead><tr><th>Targa</th><th>Modello</th><th>Intestatario</th><th>Colore</th><th>Assicurazione</th><th></th></tr></thead><tbody>${rows}</tbody></table>` : '<div class="empty">Nessuna targa trovata.</div>'}</div></div>`;
     res.send(pageLayout("Veicoli", body, "targhe", req.portalUser));
+  });
+
+
+  // ===== DOJ / GIUSTIZIA =====
+  const dojAuth = (req, res, next) => next();
+
+  app.get("/doj", dojAuth, (req, res) => {
+    const db = initDojDb(dojDatabaseFile);
+    const cases = Object.values(db.casi); const warrants = Object.values(db.mandati); const hearings = Object.values(db.udienze); const victims = Object.values(db.vittime);
+    const openCases = cases.filter(c => c.stato !== "CHIUSO").length;
+    const activeWarrants = warrants.filter(w => w.stato === "ATTIVO").length;
+    const upcoming = hearings.filter(h => new Date(h.data) >= new Date()).sort((a,b)=>new Date(a.data)-new Date(b.data)).slice(0,5);
+    const recent = cases.sort((a,b)=>new Date(b.creatoIl)-new Date(a.creatoIl)).slice(0,5).map(c => `<div class="record"><h3>${escapeHtml(c.id)} <span class="status ${c.stato === "CHIUSO" ? "ok" : "warn"}">${escapeHtml(c.stato)}</span></h3><p><strong>${escapeHtml(c.titolo)}</strong> • ${escapeHtml(c.divisione || "Criminal")}</p><p class="subtle">${escapeHtml(c.responsabile || "Assegnazione in corso")} • ${formatDate(c.creatoIl)}</p></div>`).join("") || '<div class="empty">Nessun fascicolo registrato.</div>';
+    const hearingCards = upcoming.map(h => `<div class="record"><h3>${escapeHtml(h.aula || "Aula federale")} • ${escapeHtml(h.tipo || "Udienza")}</h3><p><strong>${escapeHtml(h.caso || "Nessun fascicolo")}</strong> • ${formatDate(h.data)}</p><p>${escapeHtml(h.giudice || "Giudice assegnato")}</p></div>`).join("") || '<div class="empty">Nessuna udienza programmata.</div>';
+    const body = `<div class="topbar"><div><h1>Department of Justice</h1><p>Centro operativo per giustizia, procure, fascicoli e procedimenti MPRP.</p></div><div class="live"><span class="dot"></span> Sistema giudiziario operativo</div></div>
+      <div class="grid">
+        <div class="card stat-card span-3"><div class="label">Fascicoli aperti</div><div class="stat accent-blue">${openCases}</div></div>
+        <div class="card stat-card span-3"><div class="label">Mandati attivi</div><div class="stat accent-red">${activeWarrants}</div></div>
+        <div class="card stat-card span-3"><div class="label">Udienze</div><div class="stat accent-yellow">${hearings.length}</div></div>
+        <div class="card stat-card span-3"><div class="label">Vittime assistite</div><div class="stat accent-green">${victims.length}</div></div>
+        <div class="card span-7"><div class="section-head"><h2>Funzioni del Dipartimento</h2><span class="subtle">Struttura operativa</span></div><div class="kv"><div><small>Criminal Division</small>Indagini e procedimenti penali</div><div><small>Civil Division</small>Contenzioso e tutela del governo</div><div><small>U.S. Attorneys</small>Procure e rappresentanza in giudizio</div><div><small>National Security</small>Fascicoli a rilevanza nazionale</div><div><small>Victim Services</small>Supporto e presa in carico</div><div><small>Legal Policy</small>Pareri, direttive e documentazione</div></div></div>
+        <div class="card span-5"><div class="section-head"><h2>Accesso rapido</h2></div><div class="actions" style="display:grid;grid-template-columns:1fr 1fr"><a class="button" href="/doj/casi">Nuovo fascicolo</a><a class="button secondary" href="/doj/mandati">Mandati</a><a class="button secondary" href="/doj/procura">Procura</a><a class="button secondary" href="/doj/documenti">Documenti</a></div></div>
+        <div class="card span-7"><div class="section-head"><h2>Fascicoli recenti</h2><a class="button secondary" href="/doj/casi">Tutti i casi</a></div>${recent}</div>
+        <div class="card span-5"><div class="section-head"><h2>Prossime udienze</h2><a class="button secondary" href="/doj/tribunale">Calendario</a></div>${hearingCards}</div>
+      </div>`;
+    res.send(dojLayout("DOJ • Dashboard", body, "dashboard", req.portalUser));
+  });
+
+  app.get("/doj/casi", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const q=String(req.query.q||"").toLowerCase().trim();
+    const cases=Object.values(db.casi).filter(c=>!q||`${c.id} ${c.titolo} ${c.responsabile} ${c.divisione} ${c.soggetti}`.toLowerCase().includes(q)).sort((a,b)=>new Date(b.creatoIl)-new Date(a.creatoIl));
+    const rows=cases.map(c=>`<tr><td class="mono">${escapeHtml(c.id)}</td><td><strong>${escapeHtml(c.titolo)}</strong><br><span class="subtle">${escapeHtml(c.divisione||"Criminal")}</span></td><td>${escapeHtml(c.responsabile||"-")}</td><td><span class="status ${c.stato==="CHIUSO"?"ok":"warn"}">${escapeHtml(c.stato)}</span></td><td>${formatDate(c.creatoIl)}</td></tr>`).join("");
+    const body=`<div class="topbar"><div><h1>Fascicoli e casi</h1><p>Registro centrale dei procedimenti del DOJ.</p></div><div class="live">${cases.length} fascicoli</div></div><div class="card"><form class="search"><input class="input" name="q" value="${escapeHtml(req.query.q||"")}" placeholder="ID, titolo, divisione o responsabile"><button>Cerca</button></form><div class="table-wrap" style="margin-top:15px">${rows?`<table><thead><tr><th>ID</th><th>Fascicolo</th><th>Responsabile</th><th>Stato</th><th>Apertura</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">Nessun fascicolo trovato.</div>'}</div></div>`;
+    res.send(dojLayout("DOJ • Fascicoli",body,"casi",req.portalUser));
+  });
+
+  app.get("/doj/mandati", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const q=String(req.query.q||"").toLowerCase().trim();
+    const warrants=Object.values(db.mandati).filter(w=>!q||`${w.id} ${w.soggetto} ${w.tipo} ${w.caso}`.toLowerCase().includes(q)).sort((a,b)=>new Date(b.emessoIl)-new Date(a.emessoIl));
+    const cards=warrants.map(w=>`<div class="record"><h3>${escapeHtml(w.id)} <span class="status ${w.stato==="ATTIVO"?"bad":"ok"}">${escapeHtml(w.stato)}</span></h3><p><strong>Soggetto:</strong> ${escapeHtml(w.soggetto)} • <strong>Tipo:</strong> ${escapeHtml(w.tipo)}</p><p><strong>Fascicolo:</strong> ${escapeHtml(w.caso||"-")} • <strong>Emesso:</strong> ${formatDate(w.emessoIl)}</p><p>${escapeHtml(w.note||"Nessuna annotazione.")}</p></div>`).join("")||'<div class="empty">Nessun mandato registrato.</div>';
+    const body=`<div class="topbar"><div><h1>Mandati e ordini</h1><p>Controllo degli ordini giudiziari e del loro stato.</p></div><div class="live">${warrants.length} risultati</div></div><div class="card"><form class="search"><input class="input" name="q" value="${escapeHtml(req.query.q||"")}" placeholder="ID, soggetto, tipo o fascicolo"><button>Cerca</button></form><div style="margin-top:16px">${cards}</div></div>`;
+    res.send(dojLayout("DOJ • Mandati",body,"mandati",req.portalUser));
+  });
+
+  app.get("/doj/procura", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const prosecutors=Object.values(db.procure);
+    const cards=prosecutors.map(p=>`<div class="record"><h3>${escapeHtml(p.nome)} <span class="status ok">${escapeHtml(p.ruolo||"AUSA")}</span></h3><p><strong>Distretto:</strong> ${escapeHtml(p.distretto||"Minnesota")}</p><p><strong>Specialità:</strong> ${escapeHtml(p.specialita||"Criminal / Civil")}</p><p><strong>Fascicoli assegnati:</strong> ${escapeHtml(p.casi||0)}</p></div>`).join("")||'<div class="empty">Nessun procuratore configurato.</div>';
+    const body=`<div class="topbar"><div><h1>U.S. Attorney's Office</h1><p>Gestione della procura, assegnazioni e responsabilità sui fascicoli.</p></div><div class="live">${prosecutors.length} profili</div></div><div class="grid"><div class="card span-7">${cards}</div><div class="card span-5"><div class="section-head"><h2>Divisioni</h2></div><div class="record"><h3>Criminal</h3><p>Procedimenti penali, grandi reati e coordinamento investigativo.</p></div><div class="record"><h3>Civil</h3><p>Contenzioso, responsabilità pubblica e tutela degli interessi governativi.</p></div><div class="record"><h3>Appellate</h3><p>Ricorsi, memorie e attività davanti agli organi giudiziari.</p></div></div></div>`;
+    res.send(dojLayout("DOJ • Procura",body,"procura",req.portalUser));
+  });
+
+  app.get("/doj/tribunale", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const hearings=Object.values(db.udienze).sort((a,b)=>new Date(a.data)-new Date(b.data));
+    const rows=hearings.map(h=>`<tr><td>${formatDate(h.data)}</td><td>${escapeHtml(h.aula||"-")}</td><td>${escapeHtml(h.tipo||"Udienza")}</td><td>${escapeHtml(h.caso||"-")}</td><td>${escapeHtml(h.giudice||"-")}</td><td><span class="status ${h.stato==="CONCLUSA"?"ok":"warn"}">${escapeHtml(h.stato||"PROGRAMMATA")}</span></td></tr>`).join("");
+    const body=`<div class="topbar"><div><h1>Tribunale e udienze</h1><p>Calendario operativo dei procedimenti giudiziari.</p></div><div class="live">${hearings.length} udienze</div></div><div class="card"><div class="table-wrap">${rows?`<table><thead><tr><th>Data</th><th>Aula</th><th>Tipo</th><th>Fascicolo</th><th>Giudice</th><th>Stato</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">Nessuna udienza programmata.</div>'}</div></div>`;
+    res.send(dojLayout("DOJ • Tribunale",body,"tribunale",req.portalUser));
+  });
+
+  app.get("/doj/vittime", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const victims=Object.values(db.vittime); const cards=victims.map(v=>`<div class="record"><h3>${escapeHtml(v.id)} • ${escapeHtml(v.nome)}</h3><p><strong>Fascicolo:</strong> ${escapeHtml(v.caso||"-")} • <strong>Stato:</strong> ${escapeHtml(v.stato||"In carico")}</p><p><strong>Referente:</strong> ${escapeHtml(v.referente||"Victim Services")}</p><p>${escapeHtml(v.note||"Nessuna nota riservata.")}</p></div>`).join("")||'<div class="empty">Nessuna pratica vittime registrata.</div>';
+    const body=`<div class="topbar"><div><h1>Vittime e assistenza</h1><p>Registro delle prese in carico e dei servizi di supporto.</p></div><div class="live">${victims.length} pratiche</div></div><div class="card"><div class="notice">Area riservata: i dati devono essere trattati secondo le autorizzazioni interne e il principio di minima esposizione.</div>${cards}</div>`;
+    res.send(dojLayout("DOJ • Vittime",body,"vittime",req.portalUser));
+  });
+
+  app.get("/doj/documenti", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const docs=Object.values(db.documenti).sort((a,b)=>new Date(b.data)-new Date(a.data));
+    const rows=docs.map(d=>`<tr><td class="mono">${escapeHtml(d.id)}</td><td><strong>${escapeHtml(d.titolo)}</strong></td><td>${escapeHtml(d.tipo||"Atto")}</td><td>${escapeHtml(d.autore||"-")}</td><td>${formatDate(d.data)}</td><td><span class="status ok">${escapeHtml(d.stato||"ARCHIVIATO")}</span></td></tr>`).join("");
+    const body=`<div class="topbar"><div><h1>Documenti legali</h1><p>Direttive, ordini, pareri e documentazione dei procedimenti.</p></div><div class="live">${docs.length} documenti</div></div><div class="card"><div class="table-wrap">${rows?`<table><thead><tr><th>ID</th><th>Titolo</th><th>Tipo</th><th>Autore</th><th>Data</th><th>Stato</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">Nessun documento archiviato.</div>'}</div></div>`;
+    res.send(dojLayout("DOJ • Documenti",body,"documenti",req.portalUser));
+  });
+
+  app.get("/doj/audit", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const logs=[...db.audit].sort((a,b)=>new Date(b.data)-new Date(a.data));
+    const cards=logs.map(l=>`<div class="record"><h3>${escapeHtml(l.azione||"Operazione")} <span class="status ok">${escapeHtml(l.esito||"OK")}</span></h3><p><strong>Operatore:</strong> ${escapeHtml(l.operatore||"Sistema")} • <strong>Data:</strong> ${formatDate(l.data)}</p><p>${escapeHtml(l.dettagli||"")}</p></div>`).join("")||'<div class="empty">Nessun evento di audit.</div>';
+    const body=`<div class="topbar"><div><h1>Audit e controlli</h1><p>Tracciabilità delle operazioni e supervisione degli accessi.</p></div><div class="live">${logs.length} eventi</div></div><div class="card">${cards}</div>`;
+    res.send(dojLayout("DOJ • Audit",body,"audit",req.portalUser));
   });
 
   app.use((req, res) => {

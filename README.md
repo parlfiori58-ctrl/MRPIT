@@ -32,3 +32,18 @@ Il cookie di accesso funziona su `http://localhost`. Se in futuro pubblichi il p
 - Aggiunto `/servizio staff`, `/servizio nome utente` e `/servizio leadbord` per il servizio staff.
 - Il servizio salva il tempo in modo persistente e permette avvio, pausa/break e fine servizio; la leaderboard mostra fino a 30 operatori su 2 pagine da 15.
 - Le immagini fornite sono state integrate nel portale come `ced-iprp-logo.png` e `minnesota-state-patrol.png`.
+
+
+## Portale DOJ • Giustizia
+
+Il portale unico include anche una sezione DOJ/giustizia raggiungibile da `/doj`, con menu dedicato a:
+- Dashboard giudiziaria
+- Fascicoli e casi
+- Mandati e ordini
+- Procura / U.S. Attorney's Office
+- Tribunale e calendario udienze
+- Vittime e assistenza
+- Documenti legali
+- Audit e controlli
+
+I dati DOJ vengono mantenuti in `mprp_doj.json`, separati dal database civile MPRP. Il menu laterale permette di passare tra **Dipartimenti** e **DOJ • Giustizia** senza cambiare sito.
