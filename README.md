@@ -1,4 +1,4 @@
-# IPRP Bot + Portale FDO — uso locale con Visual Studio Code
+# MPRP Bot + Portale dipartimenti — uso locale con Visual Studio Code
 
 Questo progetto è configurato per essere eseguito in locale da Visual Studio Code. Non contiene configurazioni o istruzioni di pubblicazione cloud.
 

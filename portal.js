@@ -59,7 +59,7 @@ function createFineEmbed(fine, title = "📄 Verbale di contravvenzione") {
   return new EmbedBuilder()
     .setColor(paid ? 0x57f287 : 0xed4245)
     .setTitle(title)
-    .setDescription("Verbale amministrativo registrato nel database civile IPRP.")
+    .setDescription("Verbale amministrativo registrato nel database civile MPRP.")
     .addFields(
       {
         name: "Informazioni sul sanzionato",
@@ -82,7 +82,7 @@ function createFineEmbed(fine, title = "📄 Verbale di contravvenzione") {
         inline: false
       }
     )
-    .setFooter({ text: "IPRP • Registro sanzioni" })
+    .setFooter({ text: "MPRP • Registro sanzioni" })
     .setTimestamp(new Date(fine.creataIl));
 }
 
@@ -90,7 +90,7 @@ function createArrestEmbed(arrest, title = "🚔 Registro di arresto") {
   return new EmbedBuilder()
     .setColor(0xed4245)
     .setTitle(title)
-    .setDescription("Rapporto di arresto registrato nella fedina penale civile IPRP.")
+    .setDescription("Rapporto di arresto registrato nella fedina penale civile MPRP.")
     .addFields(
       {
         name: "Generalità dell’arrestato",
@@ -108,7 +108,7 @@ function createArrestEmbed(arrest, title = "🚔 Registro di arresto") {
         inline: false
       }
     )
-    .setFooter({ text: "IPRP • Fedina penale" })
+    .setFooter({ text: "MPRP • Fedina penale" })
     .setTimestamp(new Date(arrest.registratoIl));
 }
 
@@ -153,7 +153,7 @@ function verifySession(token, secret) {
   }
 }
 
-function pageLayout(title, body, active = "dashboard", user = "FDO") {
+function pageLayout(title, body, active = "dashboard", user = "Dipartimento") {
   const nav = [
     ["dashboard", "/", "Dashboard", "▦"],
     ["cittadini", "/cittadini", "Cittadini", "♙"],
@@ -173,7 +173,7 @@ function pageLayout(title, body, active = "dashboard", user = "FDO") {
   <meta name="theme-color" content="#08101f">
   <link rel="icon" type="image/png" href="/ced-iprp-logo.png">
   <link rel="apple-touch-icon" href="/ced-iprp-logo.png">
-  <title>${escapeHtml(title)} • Portale FDO IPRP</title>
+  <title>${escapeHtml(title)} • Portale dei dipartimenti MPRP</title>
   <style>
     :root{
       --bg:#07101f;--bg2:#0a1628;--panel:#101e33;--panel2:#142640;--line:#213a5c;
@@ -203,12 +203,12 @@ function pageLayout(title, body, active = "dashboard", user = "FDO") {
 <body>
 <div class="shell">
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><div class="crest-group"><img class="crest" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><div><strong>PORTALE FDO</strong><small>IPRP • Sistema informativo FDO</small></div></div>
+    <div class="brand"><div class="crest-group"><img class="crest" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><div><strong>PORTALE DEI DIPARTIMENTI</strong><small>MPRP • Sistema informativo dei dipartimenti</small></div></div>
     <nav class="nav">${nav}</nav>
     <div class="sidebar-bottom"><div class="userbox"><small>Sessione attiva</small><strong style="display:block;margin-top:3px">${escapeHtml(user)}</strong><a class="logout" href="/logout">Esci dal portale</a></div></div>
   </aside>
   <main class="content">
-    <div class="mobile-head"><div class="mobile-brand"><div class="mobile-logo-group"><img class="mobile-logo" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="mobile-logo-secondary" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><strong>Portale FDO</strong></div><button class="menu-btn" aria-label="Apri menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button></div>
+    <div class="mobile-head"><div class="mobile-brand"><div class="mobile-logo-group"><img class="mobile-logo" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="mobile-logo-secondary" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><strong>Portale dei dipartimenti</strong></div><button class="menu-btn" aria-label="Apri menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button></div>
     ${body}
   </main>
 </div>
@@ -221,8 +221,8 @@ function pageLayout(title, body, active = "dashboard", user = "FDO") {
 }
 
 function loginPage(message = "") {
-  return `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07101f"><link rel="icon" type="image/png" href="/ced-iprp-logo.png"><link rel="apple-touch-icon" href="/ced-iprp-logo.png"><title>Accesso • Portale FDO IPRP</title><style>
-  *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 15% 10%,rgba(77,152,255,.24),transparent 32%),radial-gradient(circle at 90% 0,rgba(168,121,255,.18),transparent 30%),#07101f;color:#f1f6ff;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.login{width:min(430px,100%);background:linear-gradient(180deg,#142640,#101e33);border:1px solid #213a5c;border-radius:24px;padding:28px;box-shadow:0 30px 90px rgba(0,0,0,.45)}.crest{width:112px;height:112px;border-radius:50%;display:block;object-fit:cover;border:1px solid rgba(128,184,255,.48);box-shadow:0 18px 48px rgba(0,0,0,.42);margin:0 auto 18px}h1{margin:0;font-size:31px;letter-spacing:-.03em}p{color:#9fb3ce;line-height:1.55}.field{margin-top:15px}label{display:block;color:#b8c8dd;font-size:13px;margin-bottom:7px}input{width:100%;border:1px solid #29466e;background:#09162a;color:white;border-radius:13px;padding:13px 14px;font:inherit;outline:none}input:focus{border-color:#4d98ff;box-shadow:0 0 0 3px rgba(77,152,255,.1)}button{width:100%;margin-top:20px;border:0;border-radius:13px;padding:13px;background:linear-gradient(135deg,#4d98ff,#3374df);color:white;font-weight:800;font-size:15px;cursor:pointer}.error{background:rgba(255,102,116,.12);border:1px solid rgba(255,102,116,.3);color:#ffb2b9;padding:10px 12px;border-radius:11px;margin-top:15px}.foot{text-align:center;font-size:12px;color:#7088a9;margin-top:18px}</style></head><body><form class="login" method="post" action="/login"><div style="display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:18px"><img class="crest" style="margin:0" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="crest" style="width:82px;height:82px;margin:0;border-radius:14px" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><h1>Accesso riservato</h1><p>Portale operativo delle Forze dell’Ordine IPRP. Inserisci le credenziali autorizzate.</p>${message ? `<div class="error">${escapeHtml(message)}</div>` : ""}<div class="field"><label>Nome utente</label><input name="username" autocomplete="username" required></div><div class="field"><label>Password</label><input type="password" name="password" autocomplete="current-password" required></div><button type="submit">Accedi al portale</button><div class="foot">Connessione protetta • Accesso riservato agli operatori autorizzati</div></form></body></html>`;
+  return `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07101f"><link rel="icon" type="image/png" href="/ced-iprp-logo.png"><link rel="apple-touch-icon" href="/ced-iprp-logo.png"><title>Accesso • Portale dei dipartimenti MPRP</title><style>
+  *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 15% 10%,rgba(77,152,255,.24),transparent 32%),radial-gradient(circle at 90% 0,rgba(168,121,255,.18),transparent 30%),#07101f;color:#f1f6ff;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.login{width:min(430px,100%);background:linear-gradient(180deg,#142640,#101e33);border:1px solid #213a5c;border-radius:24px;padding:28px;box-shadow:0 30px 90px rgba(0,0,0,.45)}.crest{width:112px;height:112px;border-radius:50%;display:block;object-fit:cover;border:1px solid rgba(128,184,255,.48);box-shadow:0 18px 48px rgba(0,0,0,.42);margin:0 auto 18px}h1{margin:0;font-size:31px;letter-spacing:-.03em}p{color:#9fb3ce;line-height:1.55}.field{margin-top:15px}label{display:block;color:#b8c8dd;font-size:13px;margin-bottom:7px}input{width:100%;border:1px solid #29466e;background:#09162a;color:white;border-radius:13px;padding:13px 14px;font:inherit;outline:none}input:focus{border-color:#4d98ff;box-shadow:0 0 0 3px rgba(77,152,255,.1)}button{width:100%;margin-top:20px;border:0;border-radius:13px;padding:13px;background:linear-gradient(135deg,#4d98ff,#3374df);color:white;font-weight:800;font-size:15px;cursor:pointer}.error{background:rgba(255,102,116,.12);border:1px solid rgba(255,102,116,.3);color:#ffb2b9;padding:10px 12px;border-radius:11px;margin-top:15px}.foot{text-align:center;font-size:12px;color:#7088a9;margin-top:18px}</style></head><body><form class="login" method="post" action="/login"><div style="display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:18px"><img class="crest" style="margin:0" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="crest" style="width:82px;height:82px;margin:0;border-radius:14px" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><h1>Accesso riservato</h1><p>Portale dei dipartimenti MPRP.</p>${message ? `<div class="error">${escapeHtml(message)}</div>` : ""}<div class="field"><label>Nome utente</label><input name="username" autocomplete="username" required></div><div class="field"><label>Password</label><input type="password" name="password" autocomplete="current-password" required></div><button type="submit">Accedi al portale</button><div class="foot">Accesso riservato</div></form></body></html>`;
 }
 
 function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChannelId = null }) {
@@ -436,7 +436,7 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
       id: generateRecordId("MUL"), userId: id, nome: d.nome, cognome: d.cognome,
       reato: String(req.body.reato || "").trim(), importo,
       descrizione: String(req.body.descrizione || "").trim(), agente: String(req.body.agente || "").trim(),
-      agentePortale: req.portalUser, origine: "PORTALE_FDO", stato: "PENDENTE", creataIl: new Date().toISOString(), pagataIl: null
+      agentePortale: req.portalUser, origine: "PORTALE_Dipartimento", stato: "PENDENTE", creataIl: new Date().toISOString(), pagataIl: null
     };
     db.multe[fine.id] = fine;
     user.multe ||= [];
@@ -497,7 +497,7 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
       cittaResidenza: String(req.body.cittaResidenza || "").trim(), eta: age,
       numeroTelefono: String(req.body.numeroTelefono || "").trim(), reati: String(req.body.reati || "").trim(),
       descrizioneAccaduto: String(req.body.descrizioneAccaduto || "").trim(), firmaAgente: String(req.body.firmaAgente || "").trim(),
-      agentePortale: req.portalUser, origine: "PORTALE_FDO", data: formatDate(now), dataEventoTimestamp: now,
+      agentePortale: req.portalUser, origine: "PORTALE_Dipartimento", data: formatDate(now), dataEventoTimestamp: now,
       registratoIl: new Date(now).toISOString(), registratoTimestamp: now
     };
     db.arresti[arrest.id] = arrest;
@@ -588,7 +588,7 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
   });
 
   const server = app.listen(port, "0.0.0.0", () => {
-    console.log(`✅ Portale FDO attivo sulla porta ${port}`);
+    console.log(`✅ Portale dei dipartimenti attivo sulla porta ${port}`);
   });
   return server;
 }

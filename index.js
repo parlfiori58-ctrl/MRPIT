@@ -38,7 +38,7 @@ const CANALE_LOG_BONIFICI = "1544082087290871950";
 const CANALE_ARRESTI = "1544082160191803452";
 
 const PORTALE_FDO_PORT = Number(process.env.PORT || 3000);
-const PORTALE_FDO_URL = process.env.PORTALE_FDO_URL || `http://localhost:${PORTALE_FDO_PORT}`;
+const PORTALE_FDO_URL = "https://mrp-database-departments.up.railway.app/login";
 
 const RUOLO_TURISTA = "1360353746005004372";
 const RUOLO_CITTADINO = "1543228774164725782";
@@ -614,7 +614,10 @@ async function controllaPermessoComando(interaction) {
   }
 
   const comando = interaction.commandName;
-  if (comando === "registra-documento") return true;
+  if (comando === "registra-documento") {
+    await interaction.reply({ content: "Questo comando è disattivato.", flags: MessageFlags.Ephemeral });
+    return false;
+  }
 
   const soloStaff = new Set([
     "rimuovi-documento",
@@ -636,7 +639,7 @@ async function controllaPermessoComando(interaction) {
     "registra-arresto",
     "controlla-fedina-penale",
     "controlla-targa",
-    "portale-fdo"
+    "portale-dei-dipartimenti"
   ]);
 
   if (soloStaff.has(comando)) {
@@ -830,7 +833,7 @@ function creaEmbedPatente(patente) {
   }
 
   return embed
-    .setFooter({ text: "IPRP • Archivio patenti civili" })
+    .setFooter({ text: "MPRP • Archivio patenti civili" })
     .setTimestamp();
 }
 
@@ -893,14 +896,14 @@ function creaEmbedMulta(multa, titolo = "📄 Verbale di contravvenzione") {
   return new EmbedBuilder()
     .setColor(multa.stato === "PAGATA" ? COLORI.verde : COLORI.rosso)
     .setTitle(titolo)
-    .setDescription("Verbale amministrativo registrato nel database civile IPRP.")
+    .setDescription("Verbale amministrativo registrato nel database civile MPRP.")
     .addFields(
       { name: "Informazioni sul sanzionato", value: `**Generalità:** ${multa.nome} ${multa.cognome}\n**Utente Discord:** <@${multa.userId}>`, inline: false },
       { name: "Violazione contestata", value: `**Reato:** ${troncaTesto(multa.reato, 450)}\n**Descrizione:** ${troncaTesto(multa.descrizione, 550)}`, inline: false },
       { name: "Sanzione pecuniaria", value: `**Importo:** ${formattaSoldi(multa.importo)}\n**Stato:** ${stato}\n**ID multa:** \`${multa.id}\``, inline: false },
       { name: "Dati dell’agente", value: `**Agente:** ${troncaTesto(multa.agente, 300)}\n**Emessa il:** ${formattaDataOra(multa.creataIl)}`, inline: false }
     )
-    .setFooter({ text: "IPRP • Registro sanzioni" })
+    .setFooter({ text: "MPRP • Registro sanzioni" })
     .setTimestamp(new Date(multa.creataIl));
 }
 
@@ -908,7 +911,7 @@ function creaEmbedArresto(arresto, titolo = "🚔 Registro di arresto") {
   return new EmbedBuilder()
     .setColor(COLORI.rosso)
     .setTitle(titolo)
-    .setDescription("Rapporto di arresto registrato nella fedina penale civile IPRP.")
+    .setDescription("Rapporto di arresto registrato nella fedina penale civile MPRP.")
     .addFields(
       {
         name: "Generalità dell’arrestato",
@@ -926,7 +929,7 @@ function creaEmbedArresto(arresto, titolo = "🚔 Registro di arresto") {
         inline: false
       }
     )
-    .setFooter({ text: "IPRP • Fedina penale" })
+    .setFooter({ text: "MPRP • Fedina penale" })
     .setTimestamp(new Date(arresto.registratoIl));
 }
 
@@ -1148,7 +1151,7 @@ async function gestisciAzioneServizio(interaction, azione, userId) {
 
 const comandi = [
   new SlashCommandBuilder()
-    .setName("registra-documento").setDescription("Registra il documento")
+    .setName("registra-documento").setDescription("Non disponibile")
     .addStringOption(o => o.setName("nome").setDescription("Nome").setRequired(true).setMaxLength(30))
     .addStringOption(o => o.setName("cognome").setDescription("Cognome").setRequired(true).setMaxLength(30))
     .addStringOption(o => o.setName("data-di-nascita").setDescription("GG-MM-AAAA").setRequired(true).setMinLength(10).setMaxLength(10))
@@ -1277,7 +1280,7 @@ const comandi = [
     .addAttachmentOption(o => o.setName("immagine-iniziale").setDescription("Immagine piccola in alto a destra (opzionale)").setRequired(false))
     .addAttachmentOption(o => o.setName("immagine").setDescription("Immagine grande sotto il messaggio (opzionale)").setRequired(false)),
 
-  new SlashCommandBuilder().setName("portale-fdo").setDescription("Apre il portale operativo FDO"),
+  new SlashCommandBuilder().setName("portale-dei-dipartimenti").setDescription("Apre il portale dei dipartimenti"),
 
   new SlashCommandBuilder().setName("reset-auto").setDescription("Rimuove tutti i veicoli immatricolati a un utente")
     .addUserOption(o => o.setName("utente").setDescription("Utente da resettare").setRequired(true)),
@@ -1406,13 +1409,13 @@ async function inviaPannelloCittadinanza() {
     const embed = new EmbedBuilder()
       .setColor(COLORI.blu)
       .setTitle("🇺🇸 Richiesta di cittadinanza")
-      .setDescription("Compila il modulo per richiedere il documento/cittadinanza. Le domande sono le stesse di `/registra-documento`. Dopo l’invio la richiesta verrà inoltrata allo staff per l’approvazione.")
-      .setFooter({ text: "IPRP • Ufficio cittadinanza" })
+      .setDescription("Compila il modulo per richiedere la cittadinanza. Dopo l’invio la richiesta verrà inoltrata per l’approvazione.")
+      .setFooter({ text: "MPRP • Ufficio cittadinanza" })
       .setTimestamp();
 
-    const logoPolizia = path.join(__dirname, "minneapolis-police.png");
+    const logoPolizia = path.join(__dirname, "ced-iprp-logo.png");
     const logoPatrol = path.join(__dirname, "minnesota-state-patrol.png");
-    if (fs.existsSync(logoPolizia)) { files.push({ attachment: logoPolizia, name: "minneapolis-police.png" }); embed.setThumbnail("attachment://minneapolis-police.png"); }
+    if (fs.existsSync(logoPolizia)) { files.push({ attachment: logoPolizia, name: "ced-iprp-logo.png" }); embed.setThumbnail("attachment://ced-iprp-logo.png"); }
     if (fs.existsSync(logoPatrol)) { files.push({ attachment: logoPatrol, name: "minnesota-state-patrol.png" }); embed.setImage("attachment://minnesota-state-patrol.png"); }
 
     await canale.send({ embeds: [embed], components: [creaPulsanteRichiestaCittadinanza()], files });
@@ -2117,7 +2120,7 @@ function creaEmbedVeicolo(veicolo, titolo = "🚘 Veicolo immatricolato") {
 Scadenza: ${formattaDataOra(veicolo.assicurazione.scadenza)}` : "❌ Non assicurata", inline: false },
       { name: "📅 Immatricolata il", value: formattaDataOra(veicolo.immatricolataTimestamp ?? veicolo.immatricolataIl), inline: false }
     )
-    .setFooter({ text: "IPRP • Registro veicoli" })
+    .setFooter({ text: "MPRP • Registro veicoli" })
     .setTimestamp();
 }
 
@@ -2369,10 +2372,9 @@ async function mostraPortaleFdo(interaction) {
   await interaction.reply({
     embeds: [new EmbedBuilder()
       .setColor(COLORI.blu)
-      .setTitle("🛡️ Portale operativo FDO")
-      .setDescription("Apri il portale per consultare cittadini, patenti, multe, fedine penali, veicoli e assicurazioni.")
-      .addFields({ name: "Accesso", value: `[Apri il Portale FDO](${PORTALE_FDO_URL})` })
-      .setFooter({ text: "Le credenziali vengono configurate nel file .env" })
+      .setTitle("🛡️ Portale dei dipartimenti")
+      .setDescription("Accedi al portale per consultare cittadini, patenti, multe, fedine penali, veicoli e assicurazioni.")
+      .addFields({ name: "Accesso", value: `[Apri il portale dei dipartimenti](https://mrp-database-departments.up.railway.app/login)` })
       .setTimestamp()],
     flags: MessageFlags.Ephemeral
   });
@@ -2553,7 +2555,7 @@ client.on(Events.InteractionCreate, async interaction => {
         "controlla-targa": controllaTarga,
         "assicurazione": mostraAssicurazioni,
         "reset-auto": resetAuto,
-        "portale-fdo": mostraPortaleFdo,
+        "portale-dei-dipartimenti": mostraPortaleFdo,
         "embed": inviaEmbed,
         "servizio": async interaction => {
           const sub = interaction.options.getSubcommand();
