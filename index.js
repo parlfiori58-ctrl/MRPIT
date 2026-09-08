@@ -1405,7 +1405,6 @@ async function inviaPannelloCittadinanza() {
     const canale = await client.channels.fetch(CANALE_RICHIESTE_CITTADINANZA);
     if (!canale?.isTextBased()) throw new Error("Canale cittadinanza non valido");
 
-    const files = [];
     const embed = new EmbedBuilder()
       .setColor(COLORI.blu)
       .setTitle("🇺🇸 Richiesta di cittadinanza")
@@ -1413,12 +1412,7 @@ async function inviaPannelloCittadinanza() {
       .setFooter({ text: "MPRP • Ufficio cittadinanza" })
       .setTimestamp();
 
-    const logoPolizia = path.join(__dirname, "ced-iprp-logo.png");
-    const logoPatrol = path.join(__dirname, "minnesota-state-patrol.png");
-    if (fs.existsSync(logoPolizia)) { files.push({ attachment: logoPolizia, name: "ced-iprp-logo.png" }); embed.setThumbnail("attachment://ced-iprp-logo.png"); }
-    if (fs.existsSync(logoPatrol)) { files.push({ attachment: logoPatrol, name: "minnesota-state-patrol.png" }); embed.setImage("attachment://minnesota-state-patrol.png"); }
-
-    await canale.send({ embeds: [embed], components: [creaPulsanteRichiestaCittadinanza()], files });
+    await canale.send({ embeds: [embed], components: [creaPulsanteRichiestaCittadinanza()] });
     const database = caricaDatabase();
     database.pannelloCittadinanzaInviatoIl = new Date().toISOString();
     salvaDatabase(database);
