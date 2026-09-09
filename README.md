@@ -36,7 +36,7 @@ Il cookie di accesso funziona su `http://localhost`. Se in futuro pubblichi il p
 
 ## Portale DOJ • Giustizia
 
-Il portale unico include anche una sezione DOJ/giustizia raggiungibile da `/doj`, con menu dedicato a:
+Il portale unico parte da `/login`: qui si sceglie se entrare nei **Dipartimenti / Polizia** oppure nel **DOJ • Giustizia**. Il portale della Polizia mantiene il template operativo esistente; il DOJ resta un’area separata all’interno dello stesso sito e usa `/doj`.
 - Dashboard giudiziaria
 - Fascicoli e casi
 - Mandati e ordini
@@ -46,4 +46,11 @@ Il portale unico include anche una sezione DOJ/giustizia raggiungibile da `/doj`
 - Documenti legali
 - Audit e controlli
 
-I dati DOJ vengono mantenuti in `mprp_doj.json`, separati dal database civile MPRP. Il menu laterale permette di passare tra **Dipartimenti** e **DOJ • Giustizia** senza cambiare sito.
+I dati DOJ vengono mantenuti in `mprp_doj.json`, separati dal database civile MPRP. Il comando Discord `/portale` apre sempre `https://mrp-database-departments.up.railway.app/login`, dove si sceglie tra **Dipartimenti / Polizia** e **DOJ • Giustizia**.
+
+
+## Accesso dal comando Discord
+
+- `/portale` apre `https://mrp-database-departments.up.railway.app/login`.
+- Dalla pagina iniziale si sceglie **Dipartimenti / Polizia** oppure **DOJ • Giustizia**.
+- Le due aree usano sessioni separate; il DOJ non è pubblico.

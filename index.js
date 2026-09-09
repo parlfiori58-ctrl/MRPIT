@@ -38,7 +38,7 @@ const CANALE_LOG_BONIFICI = "1544082087290871950";
 const CANALE_ARRESTI = "1544082160191803452";
 
 const PORTALE_FDO_PORT = Number(process.env.PORT || 3000);
-const PORTALE_FDO_URL = "https://mrp-database-departments.up.railway.app/login";
+const PORTALE_FDO_URL = process.env.PORTALE_FDO_URL || "https://mrp-database-departments.up.railway.app/login";
 
 const RUOLO_TURISTA = "1360353746005004372";
 const RUOLO_CITTADINO = "1543228774164725782";
@@ -639,7 +639,7 @@ async function controllaPermessoComando(interaction) {
     "registra-arresto",
     "controlla-fedina-penale",
     "controlla-targa",
-    "portale-dei-dipartimenti"
+    "portale"
   ]);
 
   if (soloStaff.has(comando)) {
@@ -1280,7 +1280,7 @@ const comandi = [
     .addAttachmentOption(o => o.setName("immagine-iniziale").setDescription("Immagine piccola in alto a destra (opzionale)").setRequired(false))
     .addAttachmentOption(o => o.setName("immagine").setDescription("Immagine grande sotto il messaggio (opzionale)").setRequired(false)),
 
-  new SlashCommandBuilder().setName("portale-dei-dipartimenti").setDescription("Apre il portale dei dipartimenti"),
+  new SlashCommandBuilder().setName("portale").setDescription("Apre il login del portale MPRP"),
 
   new SlashCommandBuilder().setName("reset-auto").setDescription("Rimuove tutti i veicoli immatricolati a un utente")
     .addUserOption(o => o.setName("utente").setDescription("Utente da resettare").setRequired(true)),
@@ -2549,7 +2549,7 @@ client.on(Events.InteractionCreate, async interaction => {
         "controlla-targa": controllaTarga,
         "assicurazione": mostraAssicurazioni,
         "reset-auto": resetAuto,
-        "portale-dei-dipartimenti": mostraPortaleFdo,
+        "portale": mostraPortaleFdo,
         "embed": inviaEmbed,
         "servizio": async interaction => {
           const sub = interaction.options.getSubcommand();
