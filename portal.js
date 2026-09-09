@@ -171,8 +171,8 @@ function pageLayout(title, body, active = "dashboard", user = "Dipartimento") {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#08101f">
-  <link rel="icon" type="image/png" href="/ced-iprp-logo.png">
-  <link rel="apple-touch-icon" href="/ced-iprp-logo.png">
+  <link rel="icon" type="image/png" href="/minnesota-state-patrol.png">
+  <link rel="apple-touch-icon" href="/minnesota-state-patrol.png">
   <title>${escapeHtml(title)} • Portale dei dipartimenti MPRP</title>
   <style>
     :root{
@@ -204,13 +204,13 @@ function pageLayout(title, body, active = "dashboard", user = "Dipartimento") {
 <body>
 <div class="shell">
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><div class="crest-group"><img class="crest" src="/ced-iprp-logo.png" alt="MPRP"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="MPRP Patrol"></div><div><strong>PORTALE DEI DIPARTIMENTI</strong><small>MPRP • Sistema informativo</small></div></div>
-    <div class="portal-switch"><a href="/" class="switch-item ${String(active).startsWith("doj") ? "" : "selected"}"><span>🏛️</span><span><b>Dipartimenti</b><small>Servizi operativi</small></span></a><a href="/doj" class="switch-item ${String(active).startsWith("doj") ? "selected" : ""}"><span>⚖️</span><span><b>DOJ • Giustizia</b><small>Servizi giudiziari</small></span></a></div>
+    <div class="brand"><div class="crest-group"><img class="crest" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><div><strong>PORTALE DEI DIPARTIMENTI</strong><small>MPRP • Sistema informativo</small></div></div>
+    <div class="portal-switch"><a href="/" class="switch-item ${String(active).startsWith("doj") ? "" : "selected"}"><span>🏛️</span><span><b>Dipartimenti</b><small>Servizi operativi</small></span></a><a href="/doj" class="switch-item ${String(active).startsWith("doj") ? "selected" : ""}"><span>⚖️</span><span><b>DOJ</b><small>Servizi giudiziari</small></span></a></div>
     <nav class="nav">${nav}</nav>
     <div class="sidebar-bottom"><div class="userbox"><small>Sessione attiva</small><strong style="display:block;margin-top:3px">${escapeHtml(user)}</strong><a class="logout" href="/logout">Esci dal portale</a></div></div>
   </aside>
   <main class="content">
-    <div class="mobile-head"><div class="mobile-brand"><div class="mobile-logo-group"><img class="mobile-logo" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="mobile-logo-secondary" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><strong>Portale dei dipartimenti</strong></div><button class="menu-btn" aria-label="Apri menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button></div>
+    <div class="mobile-head"><div class="mobile-brand"><div class="mobile-logo-group"><img class="mobile-logo" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><strong>Portale dei dipartimenti</strong></div><button class="menu-btn" aria-label="Apri menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button></div>
     ${body}
   </main>
 </div>
@@ -226,38 +226,38 @@ function loginPage(message = "", selectedArea = "") {
   const area = selectedArea === "doj" || selectedArea === "dipartimenti" ? selectedArea : "";
   const isDoj = area === "doj";
   const title = isDoj ? "Accesso DOJ • MPRP" : "Accesso Dipartimenti • MPRP";
-  const heading = isDoj ? "Accesso DOJ • Giustizia" : "Accesso Dipartimenti / Polizia";
+  const heading = isDoj ? "Accesso DOJ" : "Accesso Dipartimenti";
   const description = isDoj
-    ? "Inserisci le credenziali DOJ per accedere al portale della giustizia."
-    : "Inserisci le credenziali dei dipartimenti per accedere al portale operativo della Polizia.";
+    ? "Inserisci le credenziali per accedere al portale DOJ."
+    : "Inserisci le credenziali per accedere al portale Dipartimenti.";
   const choicePage = !area;
   const choiceMarkup = `
     <div class="choice-title">Scegli prima l'area a cui vuoi accedere</div>
     <div class="choice-grid">
       <a class="choice police" href="/login?area=dipartimenti">
-        <div class="choice-logos"><img src="/ced-iprp-logo.png" alt="Minnesota Police"><img src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div>
-        <strong>Dipartimenti / Polizia</strong>
-        <span>Accedi al portale dei dipartimenti con il template operativo.</span>
+        <div class="choice-icon"><img src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div>
+        <strong>Dipartimenti</strong>
+        <span>Accedi al portale dei Dipartimenti con il template operativo.</span>
       </a>
       <a class="choice doj" href="/login?area=doj">
-        <div class="choice-icon">⚖️</div>
-        <strong>DOJ • Giustizia</strong>
+        <div class="choice-icon doj-logo"><img src="/doj.png" alt="DOJ"></div>
+        <strong>DOJ</strong>
         <span>Accedi al portale DOJ e alle funzioni giudiziarie.</span>
       </a>
     </div>`;
   const loginMarkup = `
-    <div class="selected-area"><a href="/login" class="back">← Cambia area</a><div class="selected-badge ${isDoj ? "doj" : "police"}">${isDoj ? "⚖️ DOJ • Giustizia" : "👮 Dipartimenti / Polizia"}</div></div>
+    <div class="selected-area"><a href="/login" class="back">← Cambia area</a><div class="selected-badge ${isDoj ? "doj" : "police"}">${isDoj ? "⚖️ DOJ" : "👮 Dipartimenti"}</div></div>
     <form method="post" action="/login">
       <input type="hidden" name="area" value="${area}">
       <div class="field"><label>Nome utente</label><input name="username" autocomplete="username" required></div>
       <div class="field"><label>Password</label><input type="password" name="password" autocomplete="current-password" required></div>
-      <button class="login-button" type="submit">Accedi a ${isDoj ? "DOJ" : "Dipartimenti / Polizia"}</button>
+      <button class="login-button" type="submit">Accedi a ${isDoj ? "DOJ" : "Dipartimenti"}</button>
     </form>`;
 
-  return `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07101f"><link rel="icon" type="image/png" href="/ced-iprp-logo.png"><link rel="apple-touch-icon" href="/ced-iprp-logo.png"><title>${title}</title><style>
-  *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#e7e0d4,#f7f4ed);color:#241f1a;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.login{width:min(760px,100%);background:#fffdf8;border:1px solid #d4c8b6;border-radius:24px;padding:28px;box-shadow:0 24px 70px rgba(67,49,34,.16)}.brand{text-align:center;margin-bottom:22px}.brand-logos{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:16px}.brand-logos img{width:84px;height:84px;object-fit:contain}.brand-logos img:first-child{border-radius:50%}.brand-logos img:last-child{border-radius:14px}.brand h1{margin:0;font-size:31px;letter-spacing:-.03em}.brand p{color:#756b60;line-height:1.55;margin:8px 0 0}.field{margin-top:15px}label{display:block;color:#6f655b;font-size:13px;margin-bottom:7px}input{width:100%;border:1px solid #b9aa96;background:#fffdf8;color:#241f1a;border-radius:13px;padding:13px 14px;font:inherit;outline:none}input:focus{border-color:#8f7957;box-shadow:0 0 0 3px rgba(143,121,87,.12)}.choice-title{text-align:center;margin:22px 0 12px;font-size:13px;color:#756b60;font-weight:700}.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice{display:block;border:1px solid #d4c8b6;border-radius:16px;padding:16px;background:#f6f1e8;color:#241f1a;font:inherit;cursor:pointer;text-align:left;text-decoration:none;transition:.18s}.choice:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(67,49,34,.12)}.choice.police{border-top:4px solid #315b8a}.choice.doj{border-top:4px solid #6d5a72}.choice-logos{display:flex;align-items:center;gap:7px;height:58px;margin-bottom:9px}.choice-logos img{width:52px;height:52px;object-fit:contain}.choice-logos img:first-child{border-radius:50%}.choice-logos img:last-child{border-radius:10px}.choice-icon{height:58px;display:grid;place-items:center;font-size:46px;margin-bottom:9px}.choice strong{display:block;font-size:17px}.choice span{display:block;color:#756b60;line-height:1.45;font-size:12px;margin-top:5px}.error{background:#f6e8e4;border:1px solid rgba(139,62,62,.3);color:#8b3e3e;padding:10px 12px;border-radius:11px;margin:0 0 15px}.foot{text-align:center;font-size:12px;color:#8a7c6d;margin-top:18px}.selected-area{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}.back{color:#6f655b;text-decoration:none;font-size:13px}.selected-badge{padding:9px 12px;border-radius:999px;font-size:12px;font-weight:800}.selected-badge.police{background:#e8eef6;color:#315b8a}.selected-badge.doj{background:#eee8f0;color:#6d5a72}.login-button{width:100%;margin-top:18px;border:0;border-radius:13px;padding:14px 16px;background:linear-gradient(135deg,#3d5870,#2f465b);color:#fff;font:inherit;font-weight:800;cursor:pointer;box-shadow:0 10px 24px rgba(61,88,112,.2)}
+  return `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07101f"><link rel="icon" type="image/png" href="/minnesota-state-patrol.png"><link rel="apple-touch-icon" href="/minnesota-state-patrol.png"><title>${title}</title><style>
+  *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#e7e0d4,#f7f4ed);color:#241f1a;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.login{width:min(760px,100%);background:#fffdf8;border:1px solid #d4c8b6;border-radius:24px;padding:28px;box-shadow:0 24px 70px rgba(67,49,34,.16)}.brand{text-align:center;margin-bottom:22px}.brand-logos{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:16px}.brand-logos img{width:84px;height:84px;object-fit:contain}.brand-logos img:first-child{border-radius:50%}.brand-logos img:last-child{border-radius:14px}.brand h1{margin:0;font-size:31px;letter-spacing:-.03em}.brand p{color:#756b60;line-height:1.55;margin:8px 0 0}.field{margin-top:15px}label{display:block;color:#6f655b;font-size:13px;margin-bottom:7px}input{width:100%;border:1px solid #b9aa96;background:#fffdf8;color:#241f1a;border-radius:13px;padding:13px 14px;font:inherit;outline:none}input:focus{border-color:#8f7957;box-shadow:0 0 0 3px rgba(143,121,87,.12)}.choice-title{text-align:center;margin:22px 0 12px;font-size:13px;color:#756b60;font-weight:700}.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice{display:block;border:1px solid #d4c8b6;border-radius:16px;padding:16px;background:#f6f1e8;color:#241f1a;font:inherit;cursor:pointer;text-align:left;text-decoration:none;transition:.18s}.choice:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(67,49,34,.12)}.choice.police{border-top:4px solid #315b8a}.choice.doj{border-top:4px solid #6d5a72}.choice-logos{display:flex;align-items:center;gap:7px;height:58px;margin-bottom:9px}.choice-logos img{width:52px;height:52px;object-fit:contain}.choice-logos img:first-child{border-radius:50%}.choice-logos img:last-child{border-radius:10px}.choice-icon{height:58px;display:grid;place-items:center;font-size:46px;margin-bottom:9px}.choice-icon.doj-logo img{width:58px;height:58px;object-fit:contain}.choice strong{display:block;font-size:17px}.choice span{display:block;color:#756b60;line-height:1.45;font-size:12px;margin-top:5px}.error{background:#f6e8e4;border:1px solid rgba(139,62,62,.3);color:#8b3e3e;padding:10px 12px;border-radius:11px;margin:0 0 15px}.foot{text-align:center;font-size:12px;color:#8a7c6d;margin-top:18px}.selected-area{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}.back{color:#6f655b;text-decoration:none;font-size:13px}.selected-badge{padding:9px 12px;border-radius:999px;font-size:12px;font-weight:800}.selected-badge.police{background:#e8eef6;color:#315b8a}.selected-badge.doj{background:#eee8f0;color:#6d5a72}.login-button{width:100%;margin-top:18px;border:0;border-radius:13px;padding:14px 16px;background:linear-gradient(135deg,#3d5870,#2f465b);color:#fff;font:inherit;font-weight:800;cursor:pointer;box-shadow:0 10px 24px rgba(61,88,112,.2)}
   @media(max-width:620px){.choice-grid{grid-template-columns:1fr}.login{padding:20px}.selected-area{align-items:flex-start;flex-direction:column}}
-  </style></head><body><main class="login"><div class="brand"><div class="brand-logos"><img src="/ced-iprp-logo.png" alt="Minnesota Police"><img src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><h1>${choicePage ? "Accesso al portale MPRP" : heading}</h1><p>${choicePage ? "Scegli prima se vuoi entrare nei Dipartimenti / Polizia oppure nel DOJ. Successivamente comparirà il login dell'area scelta." : description}</p></div>${message ? `<div class="error">${escapeHtml(message)}</div>` : ""}${choicePage ? choiceMarkup : loginMarkup}<div class="foot">MPRP • Accesso riservato</div></main></body></html>`;
+  </style></head><body><main class="login"><div class="brand"><div class="brand-logos"><img src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><h1>${choicePage ? "Accesso al portale MPRP" : heading}</h1><p>${choicePage ? "Scegli prima se vuoi entrare nei Dipartimenti oppure nel DOJ. Successivamente comparirà il login dell'area scelta." : description}</p></div>${message ? `<div class="error">${escapeHtml(message)}</div>` : ""}${choicePage ? choiceMarkup : loginMarkup}<div class="foot">MPRP • Accesso riservato</div></main></body></html>`;
 }
 
 function dojLayout(title, body, active = "dashboard", user = "Giustizia") {
@@ -268,7 +268,7 @@ function dojLayout(title, body, active = "dashboard", user = "Giustizia") {
   ].map(([id, href, label, icon]) => `<a class="nav-item ${active === id ? "active" : ""}" href="${href}"><span class="nav-icon">${icon}</span><span>${label}</span></a>`).join("");
   let html = pageLayout(title, body, active, user);
   html = html.replace(/(<a href="\/doj" class="switch-item )([^"]*)/, "$1selected").replace(/(<a href="\/" class="switch-item )selected/, "$1");
-  html = html.replace(/<div class="brand">[\s\S]*?<\/div><div class="portal-switch">/, '<div class="brand"><div class="crest-group"><img class="crest" src="/ced-iprp-logo.png" alt="MPRP"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="MPRP Patrol"></div><div><strong>DOJ • GIUSTIZIA</strong><small>MPRP • Portale giudiziario</small></div></div><div class="portal-switch">');
+  html = html.replace(/<div class="brand">[\s\S]*?<\/div><div class="portal-switch">/, '<div class="brand"><div class="crest-group"><img class="crest" src="/doj.png" alt="DOJ"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="MPRP Patrol"></div><div><strong>DOJ</strong><small>MPRP • Portale giudiziario</small></div></div><div class="portal-switch">');
   html = html.replace(/<nav class="nav">[\s\S]*?<\/nav>/, `<nav class="nav">${dojNav}</nav>`);
   html = html.replace(/<div class="content">/, '<div class="content doj-theme">');
   return html;
@@ -306,11 +306,11 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
   app.disable("x-powered-by");
   app.use(express.urlencoded({ extended: false, limit: "20kb" }));
 
-  app.get("/ced-iprp-logo.png", (req, res) => {
-    res.sendFile(path.join(__dirname, "ced-iprp-logo.png"));
-  });
   app.get("/minnesota-state-patrol.png", (req, res) => {
     res.sendFile(path.join(__dirname, "minnesota-state-patrol.png"));
+  });
+  app.get("/doj.png", (req, res) => {
+    res.sendFile(path.join(__dirname, "doj.png"));
   });
 
   const expectedUser = process.env.PORTALE_USER || "fdo";
@@ -409,7 +409,7 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
     if (area === "dipartimenti") {
       if (!expectedPassword) return res.status(503).send(loginPage("PORTALE_PASSWORD non è configurata nel file .env.", "dipartimenti"));
       if (!safeEqual(username, expectedUser) || !safeEqual(password, expectedPassword)) {
-        return res.status(401).send(loginPage("Credenziali non valide per Dipartimenti / Polizia.", "dipartimenti"));
+        return res.status(401).send(loginPage("Credenziali non valide per Dipartimenti.", "dipartimenti"));
       }
       const token = createSession(username, sessionSecret);
       res.setHeader("Set-Cookie", `iprp_session=${encodeURIComponent(token)}; Path=/; HttpOnly${secureCookie}; SameSite=Lax; Max-Age=43200`);

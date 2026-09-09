@@ -31,7 +31,7 @@ Il cookie di accesso funziona su `http://localhost`. Se in futuro pubblichi il p
 - Dopo l'accettazione del documento, il ruolo `1543228774164725781` viene sostituito dal ruolo `1543228774164725782`; il ruolo `1543228774164725783` resta assegnato.
 - Aggiunto `/servizio staff`, `/servizio nome utente` e `/servizio leadbord` per il servizio staff.
 - Il servizio salva il tempo in modo persistente e permette avvio, pausa/break e fine servizio; la leaderboard mostra fino a 30 operatori su 2 pagine da 15.
-- Le immagini fornite sono state integrate nel portale come `ced-iprp-logo.png` e `minnesota-state-patrol.png`.
+- Le immagini del portale sono `minnesota-state-patrol.png` per Dipartimenti e `doj.png` per DOJ. Il vecchio `ced-iprp-logo.png` non fa parte del progetto.
 
 
 ## Portale DOJ • Giustizia
