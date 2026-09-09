@@ -12,9 +12,6 @@ const {
   Client,
   EmbedBuilder,
   Events,
-  ModalBuilder,
-  TextInputBuilder,
-  TextInputStyle,
   GatewayIntentBits,
   MessageFlags,
   PermissionFlagsBits,
@@ -32,23 +29,23 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const GUILD_ID = process.env.GUILD_ID;
 
 const CANALE_DOCUMENTI = "1543228824471339088";
-const CANALE_RICHIESTE_CITTADINANZA = "1543228800735903767";
 const CANALE_LOG_PATENTI = "1544081942545301584";
 const CANALE_LOG_BONIFICI = "1544082087290871950";
 const CANALE_ARRESTI = "1544082160191803452";
 
 const PORTALE_FDO_PORT = Number(process.env.PORT || 3000);
-const PORTALE_FDO_URL = "https://mrp-database-departments.up.railway.app/login";
+const PORTALE_FDO_URL = process.env.PORTALE_FDO_URL || `http://localhost:${PORTALE_FDO_PORT}`;
 
 const RUOLO_TURISTA = "1360353746005004372";
-const RUOLO_CITTADINO = "1543228774164725782";
+const RUOLO_CITTADINO = "1360353746005004373";
 const RUOLO_POLIZIA = "1360353746005004377";
 const RUOLO_STAFF = "1543228774743810140";
-const RUOLO_NUOVO_PLAYER = "1543228774164725781";
-const RUOLO_CITTADINANZA_APPROVATA = "1543228774164725782";
-const RUOLO_AUTOMATICO_BASE = "1543228774164725783";
 
-const RUOLI_AUTOMATICI = [RUOLO_NUOVO_PLAYER, RUOLO_AUTOMATICO_BASE];
+const RUOLI_AUTOMATICI = [
+  "1543228774164725783",
+  "1543228774164725780",
+  "1543228774164725781"
+];
 
 const BANCA_INIZIALE = 15000;
 const CONTANTI_INIZIALI = 0;
@@ -138,8 +135,6 @@ function creaDatabaseVuoto() {
     multe: {},
     arresti: {},
     targhe: {},
-    servizioStaff: {},
-    pannelloCittadinanzaInviatoIl: null,
     ultimoAggiornamento: new Date().toISOString()
   };
 }
@@ -226,14 +221,6 @@ function normalizzaDatabase(database) {
   }
   if (!database.targhe || typeof database.targhe !== "object") {
     database.targhe = {};
-    modificato = true;
-  }
-  if (!database.servizioStaff || typeof database.servizioStaff !== "object") {
-    database.servizioStaff = {};
-    modificato = true;
-  }
-  if (!Object.hasOwn(database, "pannelloCittadinanzaInviatoIl")) {
-    database.pannelloCittadinanzaInviatoIl = null;
     modificato = true;
   }
   if (!database.versione) {
@@ -558,13 +545,11 @@ async function assegnaRuoliAutomatici(membro) {
 async function trasformaInCittadino(guild, userId) {
   try {
     const membro = await guild.members.fetch(userId);
-    for (const ruoloDaRimuovere of [RUOLO_NUOVO_PLAYER]) {
-      if (membro.roles.cache.has(ruoloDaRimuovere)) {
-        await membro.roles.remove(ruoloDaRimuovere, "Documento approvato");
-      }
+    if (membro.roles.cache.has(RUOLO_TURISTA)) {
+      await membro.roles.remove(RUOLO_TURISTA, "Documento approvato");
     }
-    if (!membro.roles.cache.has(RUOLO_CITTADINANZA_APPROVATA)) {
-      await membro.roles.add(RUOLO_CITTADINANZA_APPROVATA, "Documento approvato");
+    if (!membro.roles.cache.has(RUOLO_CITTADINO)) {
+      await membro.roles.add(RUOLO_CITTADINO, "Documento approvato");
     }
   } catch (errore) {
     console.error("❌ Errore cambio ruoli:", errore);
@@ -614,10 +599,7 @@ async function controllaPermessoComando(interaction) {
   }
 
   const comando = interaction.commandName;
-  if (comando === "registra-documento") {
-    await interaction.reply({ content: "Questo comando è disattivato.", flags: MessageFlags.Ephemeral });
-    return false;
-  }
+  if (comando === "registra-documento") return true;
 
   const soloStaff = new Set([
     "rimuovi-documento",
@@ -627,8 +609,7 @@ async function controllaPermessoComando(interaction) {
     "aggiungi-punti-patente",
     "immatricola-auto",
     "reset-auto",
-    "embed",
-    "servizio"
+    "embed"
   ]);
 
   const poliziaOStaff = new Set([
@@ -639,7 +620,8 @@ async function controllaPermessoComando(interaction) {
     "registra-arresto",
     "controlla-fedina-penale",
     "controlla-targa",
-    "portale-dei-dipartimenti"
+    "portale-dei-dipartimenti",
+    "portale-doj"
   ]);
 
   if (soloStaff.has(comando)) {
@@ -833,7 +815,7 @@ function creaEmbedPatente(patente) {
   }
 
   return embed
-    .setFooter({ text: "MPRP • Archivio patenti civili" })
+    .setFooter({ text: "IPRP • Archivio patenti civili" })
     .setTimestamp();
 }
 
@@ -896,14 +878,14 @@ function creaEmbedMulta(multa, titolo = "📄 Verbale di contravvenzione") {
   return new EmbedBuilder()
     .setColor(multa.stato === "PAGATA" ? COLORI.verde : COLORI.rosso)
     .setTitle(titolo)
-    .setDescription("Verbale amministrativo registrato nel database civile MPRP.")
+    .setDescription("Verbale amministrativo registrato nel database civile IPRP.")
     .addFields(
       { name: "Informazioni sul sanzionato", value: `**Generalità:** ${multa.nome} ${multa.cognome}\n**Utente Discord:** <@${multa.userId}>`, inline: false },
       { name: "Violazione contestata", value: `**Reato:** ${troncaTesto(multa.reato, 450)}\n**Descrizione:** ${troncaTesto(multa.descrizione, 550)}`, inline: false },
       { name: "Sanzione pecuniaria", value: `**Importo:** ${formattaSoldi(multa.importo)}\n**Stato:** ${stato}\n**ID multa:** \`${multa.id}\``, inline: false },
       { name: "Dati dell’agente", value: `**Agente:** ${troncaTesto(multa.agente, 300)}\n**Emessa il:** ${formattaDataOra(multa.creataIl)}`, inline: false }
     )
-    .setFooter({ text: "MPRP • Registro sanzioni" })
+    .setFooter({ text: "IPRP • Registro sanzioni" })
     .setTimestamp(new Date(multa.creataIl));
 }
 
@@ -911,7 +893,7 @@ function creaEmbedArresto(arresto, titolo = "🚔 Registro di arresto") {
   return new EmbedBuilder()
     .setColor(COLORI.rosso)
     .setTitle(titolo)
-    .setDescription("Rapporto di arresto registrato nella fedina penale civile MPRP.")
+    .setDescription("Rapporto di arresto registrato nella fedina penale civile IPRP.")
     .addFields(
       {
         name: "Generalità dell’arrestato",
@@ -929,7 +911,7 @@ function creaEmbedArresto(arresto, titolo = "🚔 Registro di arresto") {
         inline: false
       }
     )
-    .setFooter({ text: "MPRP • Fedina penale" })
+    .setFooter({ text: "IPRP • Fedina penale" })
     .setTimestamp(new Date(arresto.registratoIl));
 }
 
@@ -980,178 +962,12 @@ function pulsantiPaginaAuto(userId, possiedePatente) {
 }
 
 /*━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  SERVIZIO STAFF
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━*/
-
-function ottieniServizioStaff(database, userId) {
-  const servizio = database.servizioStaff[userId] ?? { totaleMs: 0, sessioneIniziataIl: null, inPausa: false };
-  servizio.totaleMs = Math.max(0, Number(servizio.totaleMs) || 0);
-  servizio.sessioneIniziataIl = Number.isFinite(Number(servizio.sessioneIniziataIl)) ? Number(servizio.sessioneIniziataIl) : null;
-  servizio.inPausa = Boolean(servizio.inPausa);
-  database.servizioStaff[userId] = servizio;
-  return servizio;
-}
-
-function calcolaTotaleServizio(servizio, adesso = Date.now()) {
-  const base = Math.max(0, Number(servizio?.totaleMs) || 0);
-  if (servizio?.sessioneIniziataIl && !servizio.inPausa) return base + Math.max(0, adesso - Number(servizio.sessioneIniziataIl));
-  return base;
-}
-
-function formattaServizio(ms) {
-  const secondi = Math.floor(Math.max(0, Number(ms) || 0) / 1000);
-  const giorni = Math.floor(secondi / 86400);
-  const ore = Math.floor((secondi % 86400) / 3600);
-  const minuti = Math.floor((secondi % 3600) / 60);
-  const sec = secondi % 60;
-  return `${giorni}g ${ore}h ${minuti}m ${sec}s`;
-}
-
-function creaPulsantiServizioStaff(userId, stato) {
-  return new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId(`servizio_avvia:${userId}`).setLabel("Avvia servizio staff").setEmoji("🟢").setStyle(ButtonStyle.Success).setDisabled(stato === "attivo"),
-    new ButtonBuilder().setCustomId(`servizio_pausa:${userId}`).setLabel("Ferma / break staff").setEmoji("⏸️").setStyle(ButtonStyle.Secondary).setDisabled(stato !== "attivo"),
-    new ButtonBuilder().setCustomId(`servizio_fine:${userId}`).setLabel("Fine servizio staff").setEmoji("🔴").setStyle(ButtonStyle.Danger).setDisabled(stato === "nessun servizio")
-  );
-}
-
-function creaEmbedServizioStaff(userId, nome, servizio) {
-  const adesso = Date.now();
-  const totale = calcolaTotaleServizio(servizio, adesso);
-  const stato = servizio.sessioneIniziataIl && !servizio.inPausa ? "🟢 In servizio" : servizio.inPausa ? "⏸️ In pausa" : "⚪ Non in servizio";
-  return new EmbedBuilder()
-    .setColor(servizio.sessioneIniziataIl && !servizio.inPausa ? COLORI.verde : servizio.inPausa ? COLORI.giallo : COLORI.grigio)
-    .setTitle("🛡️ Servizio Staff")
-    .setDescription(`**${nome}**\n${stato}`)
-    .addFields(
-      { name: "Tempo totale", value: `**${formattaServizio(totale)}**`, inline: false },
-      { name: "Giorni", value: String(Math.floor(totale / 86400000)), inline: true },
-      { name: "Ore", value: String(Math.floor(totale / 3600000)), inline: true },
-      { name: "Secondi", value: String(Math.floor(totale / 1000)), inline: true }
-    )
-    .setFooter({ text: `Discord ID: ${userId}` })
-    .setTimestamp();
-}
-
-async function comandoServizioStaff(interaction) {
-  const database = caricaDatabase();
-  const servizio = ottieniServizioStaff(database, interaction.user.id);
-  salvaDatabase(database);
-  const stato = servizio.sessioneIniziataIl && !servizio.inPausa ? "attivo" : servizio.inPausa ? "pausa" : "nessun servizio";
-  await interaction.reply({
-    embeds: [creaEmbedServizioStaff(interaction.user.id, interaction.member?.displayName || interaction.user.displayName || interaction.user.username, servizio)],
-    components: [creaPulsantiServizioStaff(interaction.user.id, stato)],
-    flags: MessageFlags.Ephemeral
-  });
-}
-
-async function visualizzaServizioUtente(interaction) {
-  const destinatario = interaction.options.getUser("utente", true);
-  const database = caricaDatabase();
-  const servizio = ottieniServizioStaff(database, destinatario.id);
-  salvaDatabase(database);
-  const membro = await interaction.guild.members.fetch(destinatario.id).catch(() => null);
-  const nome = membro?.displayName || destinatario.globalName || destinatario.username;
-  await interaction.reply({ embeds: [creaEmbedServizioStaff(destinatario.id, nome, servizio)], flags: MessageFlags.Ephemeral });
-}
-
-async function creaLeaderboardServizio(interaction, pagina = 1) {
-  const database = caricaDatabase();
-  const entries = Object.entries(database.servizioStaff || {})
-    .map(([userId, servizio]) => ({ userId, ms: calcolaTotaleServizio(servizio) }))
-    .filter(entry => entry.ms > 0)
-    .sort((a, b) => b.ms - a.ms);
-
-  const perPagina = 15;
-  const totalePagine = Math.max(1, Math.min(2, Math.ceil(entries.length / perPagina)));
-  const paginaSicura = Math.max(1, Math.min(pagina, totalePagine));
-  const inizio = (paginaSicura - 1) * perPagina;
-  const paginaEntries = entries.slice(inizio, inizio + perPagina);
-  const righe = paginaEntries.length
-    ? paginaEntries.map((entry, indice) => `${inizio + indice + 1}. <@${entry.userId}> — **${formattaServizio(entry.ms)}**`).join("\n")
-    : "Nessun servizio registrato.";
-
-  await interaction.reply({
-    embeds: [new EmbedBuilder().setColor(COLORI.viola).setTitle("🏆 Leaderboard servizio staff").setDescription(righe).setFooter({ text: `Pagina ${paginaSicura}/${totalePagine} • Classifica fino a 30 posti` }).setTimestamp()],
-    components: [new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId(`servizio_leaderboard_indietro:${paginaSicura}`).setLabel("Indietro").setEmoji("⬅️").setStyle(ButtonStyle.Secondary).setDisabled(paginaSicura <= 1),
-      new ButtonBuilder().setCustomId(`servizio_leaderboard_avanti:${paginaSicura}`).setLabel("Avanti").setEmoji("➡️").setStyle(ButtonStyle.Primary).setDisabled(paginaSicura >= totalePagine)
-    )],
-    flags: MessageFlags.Ephemeral
-  });
-}
-
-async function aggiornaLeaderboardServizio(interaction, pagina) {
-  const database = caricaDatabase();
-  const entries = Object.entries(database.servizioStaff || {})
-    .map(([userId, servizio]) => ({ userId, ms: calcolaTotaleServizio(servizio) }))
-    .filter(entry => entry.ms > 0)
-    .sort((a, b) => b.ms - a.ms);
-  const perPagina = 15;
-  const totalePagine = Math.max(1, Math.min(2, Math.ceil(entries.length / perPagina)));
-  const paginaSicura = Math.max(1, Math.min(pagina, totalePagine));
-  const inizio = (paginaSicura - 1) * perPagina;
-  const righe = entries.slice(inizio, inizio + perPagina).map((entry, indice) => `${inizio + indice + 1}. <@${entry.userId}> — **${formattaServizio(entry.ms)}**`).join("\n") || "Nessun servizio registrato.";
-  await interaction.update({
-    embeds: [new EmbedBuilder().setColor(COLORI.viola).setTitle("🏆 Leaderboard servizio staff").setDescription(righe).setFooter({ text: `Pagina ${paginaSicura}/${totalePagine} • Classifica fino a 30 posti` }).setTimestamp()],
-    components: [new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId(`servizio_leaderboard_indietro:${paginaSicura}`).setLabel("Indietro").setEmoji("⬅️").setStyle(ButtonStyle.Secondary).setDisabled(paginaSicura <= 1),
-      new ButtonBuilder().setCustomId(`servizio_leaderboard_avanti:${paginaSicura}`).setLabel("Avanti").setEmoji("➡️").setStyle(ButtonStyle.Primary).setDisabled(paginaSicura >= totalePagine)
-    )]
-  });
-}
-
-async function gestisciAzioneServizio(interaction, azione, userId) {
-  const membro = await ottieniMembroInterazione(interaction);
-  if (!membro || !eStaff(membro)) {
-    await interaction.reply({ content: "❌ Devi essere staff per gestire il servizio.", flags: MessageFlags.Ephemeral });
-    return;
-  }
-  if (interaction.user.id !== userId) {
-    await interaction.reply({ content: "❌ Questi pulsanti appartengono a un altro operatore.", flags: MessageFlags.Ephemeral });
-    return;
-  }
-  const database = caricaDatabase();
-  const servizio = ottieniServizioStaff(database, userId);
-  const adesso = Date.now();
-
-  if (azione === "avvia") {
-    if (servizio.sessioneIniziataIl && !servizio.inPausa) {
-      await interaction.reply({ content: "⚠️ Il servizio è già attivo.", flags: MessageFlags.Ephemeral });
-      return;
-    }
-    servizio.sessioneIniziataIl = adesso;
-    servizio.inPausa = false;
-  } else if (azione === "pausa") {
-    if (!servizio.sessioneIniziataIl || servizio.inPausa) {
-      await interaction.reply({ content: "⚠️ Il servizio non è attualmente attivo.", flags: MessageFlags.Ephemeral });
-      return;
-    }
-    servizio.totaleMs = calcolaTotaleServizio(servizio, adesso);
-    servizio.sessioneIniziataIl = null;
-    servizio.inPausa = true;
-  } else if (azione === "fine") {
-    servizio.totaleMs = calcolaTotaleServizio(servizio, adesso);
-    servizio.sessioneIniziataIl = null;
-    servizio.inPausa = false;
-  }
-
-  database.servizioStaff[userId] = servizio;
-  salvaDatabase(database);
-  const stato = servizio.sessioneIniziataIl && !servizio.inPausa ? "attivo" : servizio.inPausa ? "pausa" : "nessun servizio";
-  await interaction.update({
-    embeds: [creaEmbedServizioStaff(userId, interaction.member?.displayName || interaction.user.displayName || interaction.user.username, servizio)],
-    components: [creaPulsantiServizioStaff(userId, stato)]
-  });
-}
-
-/*━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   COMANDI SLASH
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━*/
 
 const comandi = [
   new SlashCommandBuilder()
-    .setName("registra-documento").setDescription("Non disponibile")
+    .setName("registra-documento").setDescription("Registra il documento")
     .addStringOption(o => o.setName("nome").setDescription("Nome").setRequired(true).setMaxLength(30))
     .addStringOption(o => o.setName("cognome").setDescription("Cognome").setRequired(true).setMaxLength(30))
     .addStringOption(o => o.setName("data-di-nascita").setDescription("GG-MM-AAAA").setRequired(true).setMinLength(10).setMaxLength(10))
@@ -1280,15 +1096,12 @@ const comandi = [
     .addAttachmentOption(o => o.setName("immagine-iniziale").setDescription("Immagine piccola in alto a destra (opzionale)").setRequired(false))
     .addAttachmentOption(o => o.setName("immagine").setDescription("Immagine grande sotto il messaggio (opzionale)").setRequired(false)),
 
-  new SlashCommandBuilder().setName("portale-dei-dipartimenti").setDescription("Apre il portale dei dipartimenti"),
+  new SlashCommandBuilder().setName("portale-dei-dipartimenti").setDescription("Apre il portale operativo dei dipartimenti"),
+
+  new SlashCommandBuilder().setName("portale-doj").setDescription("Apre il portale del Department of Justice"),
 
   new SlashCommandBuilder().setName("reset-auto").setDescription("Rimuove tutti i veicoli immatricolati a un utente")
     .addUserOption(o => o.setName("utente").setDescription("Utente da resettare").setRequired(true)),
-
-  new SlashCommandBuilder().setName("servizio").setDescription("Gestione del servizio staff")
-    .addSubcommand(sub => sub.setName("staff").setDescription("Visualizza e gestisci il tuo servizio staff"))
-    .addSubcommand(sub => sub.setName("nome").setDescription("Visualizza il servizio di un utente").addUserOption(o => o.setName("utente").setDescription("Utente da controllare").setRequired(true)))
-    .addSubcommand(sub => sub.setName("leadbord").setDescription("Mostra la classifica del servizio staff")),
 
 ].map(comando => comando.toJSON());
 
@@ -1314,33 +1127,10 @@ async function gestisciAutocomplete(interaction) {
 }
 
 /*━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  RICHIESTA CITTADINANZA
+  DOCUMENTI
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━*/
 
-function creaPulsanteRichiestaCittadinanza() {
-  return new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setCustomId("apri_richiesta_cittadinanza")
-      .setLabel("Richiedi cittadinanza")
-      .setEmoji("🪪")
-      .setStyle(ButtonStyle.Primary)
-  );
-}
-
-function creaModalRichiestaCittadinanza() {
-  return new ModalBuilder()
-    .setCustomId("modulo_richiesta_cittadinanza")
-    .setTitle("Richiesta di cittadinanza")
-    .addComponents(
-      new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("nome").setLabel("Nome").setStyle(TextInputStyle.Short).setRequired(true).setMaxLength(30)),
-      new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("cognome").setLabel("Cognome").setStyle(TextInputStyle.Short).setRequired(true).setMaxLength(30)),
-      new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("data-di-nascita").setLabel("Data di nascita (GG-MM-AAAA)").setStyle(TextInputStyle.Short).setRequired(true).setMinLength(10).setMaxLength(10)),
-      new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("cittadinanza").setLabel("Cittadinanza").setStyle(TextInputStyle.Short).setRequired(true).setMaxLength(50)),
-      new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("nome-roblox").setLabel("Nome Roblox").setStyle(TextInputStyle.Short).setRequired(true).setMaxLength(30))
-    );
-}
-
-async function inviaRichiestaDocumento(interaction, dati) {
+async function registraDocumento(interaction) {
   const database = caricaDatabase();
   const userId = interaction.user.id;
 
@@ -1353,19 +1143,24 @@ async function inviaRichiestaDocumento(interaction, dati) {
     return;
   }
 
-  const nome = String(dati.nome || "").trim();
-  const cognome = String(dati.cognome || "").trim();
-  const dataNascita = String(dati.dataNascita || "").trim();
-  const cittadinanza = String(dati.cittadinanza || "").trim();
-  const nomeRoblox = String(dati.nomeRoblox || "").trim();
+  const nome = interaction.options.getString("nome", true).trim();
+  const cognome = interaction.options.getString("cognome", true).trim();
+  const dataNascita = interaction.options.getString("data-di-nascita", true).trim();
+  const cittadinanza = interaction.options.getString("cittadinanza", true).trim();
+  const nomeRoblox = interaction.options.getString("nome-roblox", true).trim();
 
-  if (!nome || !cognome || !cittadinanza || !nomeRoblox || calcolaEta(dataNascita) === null) {
-    await interaction.reply({ content: "❌ Dati non validi. Controlla tutti i campi e usa la data GG-MM-AAAA.", flags: MessageFlags.Ephemeral });
+  if (calcolaEta(dataNascita) === null) {
+    await interaction.reply({ content: "❌ Data non valida. Usa GG-MM-AAAA.", flags: MessageFlags.Ephemeral });
     return;
   }
 
   const documento = {
-    discordId: userId, nome, cognome, dataNascita, cittadinanza, nomeRoblox,
+    discordId: userId,
+    nome,
+    cognome,
+    dataNascita,
+    cittadinanza,
+    nomeRoblox,
     richiestoIl: new Date().toISOString()
   };
 
@@ -1389,51 +1184,8 @@ async function inviaRichiestaDocumento(interaction, dati) {
     const aggiornato = caricaDatabase();
     delete aggiornato.richiesteDocumenti[userId];
     salvaDatabase(aggiornato);
-    console.error("❌ Errore invio richiesta documento:", errore);
     await interaction.reply({ content: "❌ Errore durante l’invio della richiesta.", flags: MessageFlags.Ephemeral });
   }
-}
-
-async function inviaPannelloCittadinanza() {
-  const statoDatabase = caricaDatabase();
-  if (statoDatabase.pannelloCittadinanzaInviatoIl) {
-    console.log("ℹ️ Pannello cittadinanza già presente: non invio un duplicato.");
-    return;
-  }
-
-  try {
-    const canale = await client.channels.fetch(CANALE_RICHIESTE_CITTADINANZA);
-    if (!canale?.isTextBased()) throw new Error("Canale cittadinanza non valido");
-
-    const embed = new EmbedBuilder()
-      .setColor(COLORI.blu)
-      .setTitle("🇺🇸 Richiesta di cittadinanza")
-      .setDescription("Compila il modulo per richiedere la cittadinanza. Dopo l’invio la richiesta verrà inoltrata per l’approvazione.")
-      .setFooter({ text: "MPRP • Ufficio cittadinanza" })
-      .setTimestamp();
-
-    await canale.send({ embeds: [embed], components: [creaPulsanteRichiestaCittadinanza()] });
-    const database = caricaDatabase();
-    database.pannelloCittadinanzaInviatoIl = new Date().toISOString();
-    salvaDatabase(database);
-    console.log(`✅ Pannello cittadinanza inviato nel canale ${CANALE_RICHIESTE_CITTADINANZA}.`);
-  } catch (errore) {
-    console.error("❌ Non sono riuscito a inviare il pannello cittadinanza:", errore);
-  }
-}
-
-/*━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  DOCUMENTI
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━*/
-
-async function registraDocumento(interaction) {
-  await inviaRichiestaDocumento(interaction, {
-    nome: interaction.options.getString("nome", true),
-    cognome: interaction.options.getString("cognome", true),
-    dataNascita: interaction.options.getString("data-di-nascita", true),
-    cittadinanza: interaction.options.getString("cittadinanza", true),
-    nomeRoblox: interaction.options.getString("nome-roblox", true)
-  });
 }
 
 async function accettaDocumento(interaction, userId) {
@@ -2114,7 +1866,7 @@ function creaEmbedVeicolo(veicolo, titolo = "🚘 Veicolo immatricolato") {
 Scadenza: ${formattaDataOra(veicolo.assicurazione.scadenza)}` : "❌ Non assicurata", inline: false },
       { name: "📅 Immatricolata il", value: formattaDataOra(veicolo.immatricolataTimestamp ?? veicolo.immatricolataIl), inline: false }
     )
-    .setFooter({ text: "MPRP • Registro veicoli" })
+    .setFooter({ text: "IPRP • Registro veicoli" })
     .setTimestamp();
 }
 
@@ -2367,12 +2119,24 @@ async function mostraPortaleFdo(interaction) {
     embeds: [new EmbedBuilder()
       .setColor(COLORI.blu)
       .setTitle("🛡️ Portale dei dipartimenti")
-      .setDescription("Accedi al portale per consultare cittadini, patenti, multe, fedine penali, veicoli e assicurazioni.")
-      .addFields({ name: "Accesso", value: `[Apri il portale dei dipartimenti](https://mrp-database-departments.up.railway.app/login)` })
+      .setDescription("Apri il portale per consultare cittadini, patenti, multe, fedine penali, veicoli e assicurazioni.")
+      .addFields({ name: "Accesso", value: `[Apri il Portale dei dipartimenti](${PORTALE_FDO_URL})` })
+      
       .setTimestamp()],
     flags: MessageFlags.Ephemeral
   });
 }
+
+async function mostraPortaleDoj(interaction) {
+  await interaction.reply({
+    embeds: [new EmbedBuilder().setColor(COLORI.giallo).setTitle("⚖️ Department of Justice")
+      .setDescription("Apri il portale DOJ per fascicoli, udienze, mandati, programma vittime e documenti ufficiali.")
+      .addFields({ name: "Accesso", value: `[Apri il Portale DOJ](${PORTALE_FDO_URL}/doj-login)` })
+      .setTimestamp()],
+    flags: MessageFlags.Ephemeral
+  });
+}
+
 
 /*━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   INVIO EMBED STAFF
@@ -2550,31 +2314,13 @@ client.on(Events.InteractionCreate, async interaction => {
         "assicurazione": mostraAssicurazioni,
         "reset-auto": resetAuto,
         "portale-dei-dipartimenti": mostraPortaleFdo,
-        "embed": inviaEmbed,
-        "servizio": async interaction => {
-          const sub = interaction.options.getSubcommand();
-          if (sub === "staff") return comandoServizioStaff(interaction);
-          if (sub === "nome") return visualizzaServizioUtente(interaction);
-          if (sub === "leadbord") return creaLeaderboardServizio(interaction);
-        }
+        "portale-doj": mostraPortaleDoj,
+        "embed": inviaEmbed
       };
 
       const funzione = azioni[interaction.commandName];
       if (funzione) await funzione(interaction);
       return;
-    }
-
-    if (interaction.isModalSubmit()) {
-      if (interaction.customId === "modulo_richiesta_cittadinanza") {
-        await inviaRichiestaDocumento(interaction, {
-          nome: interaction.fields.getTextInputValue("nome"),
-          cognome: interaction.fields.getTextInputValue("cognome"),
-          dataNascita: interaction.fields.getTextInputValue("data-di-nascita"),
-          cittadinanza: interaction.fields.getTextInputValue("cittadinanza"),
-          nomeRoblox: interaction.fields.getTextInputValue("nome-roblox")
-        });
-        return;
-      }
     }
 
     if (interaction.isButton()) {
@@ -2585,16 +2331,6 @@ client.on(Events.InteractionCreate, async interaction => {
       if (azione === "portafoglio_conto") return void await paginaConto(interaction, userId);
       if (azione === "portafoglio_patente") return void await paginaPatente(interaction, userId);
       if (azione === "portafoglio_auto") return void await paginaAuto(interaction, userId);
-      if (azione === "servizio_avvia") return void await gestisciAzioneServizio(interaction, "avvia", userId);
-      if (azione === "servizio_pausa") return void await gestisciAzioneServizio(interaction, "pausa", userId);
-      if (azione === "servizio_fine") return void await gestisciAzioneServizio(interaction, "fine", userId);
-      if (azione === "servizio_leaderboard_indietro") return void await aggiornaLeaderboardServizio(interaction, Number(userId) - 1);
-      if (azione === "servizio_leaderboard_avanti") return void await aggiornaLeaderboardServizio(interaction, Number(userId) + 1);
-      if (azione === "apri_richiesta_cittadinanza") {
-        await interaction.showModal(creaModalRichiestaCittadinanza());
-        return;
-      }
-
       if (azione === "assicura") {
         const [, piano, proprietarioId, targa] = interaction.customId.split(":");
         return void await acquistaAssicurazione(interaction, piano, proprietarioId, targa);
@@ -2620,8 +2356,7 @@ client.once(Events.ClientReady, async bot => {
   avviaBackupPeriodico();
   avviaPresenzaAlternata(bot);
   await ripristinaTimerSequestri();
-  await inviaPannelloCittadinanza();
-  console.log("✅ Database, backup, timer e pannello cittadinanza pronti.");
+  console.log("✅ Database, backup e timer ripristinati.");
 });
 
 function chiusuraSicura(segnale) {
