@@ -263,11 +263,15 @@ function loginPage(message = "", selectedArea = "") {
 }
 
 function dojLayout(title, body, active = "dashboard", user = "Giustizia") {
-  const dojNav = [
-    ["dashboard", "/doj", "Dashboard", "⌂"], ["casi", "/doj/casi", "Fascicoli e casi", "§"], ["mandati", "/doj/mandati", "Mandati", "◈"],
-    ["procura", "/doj/procura", "Procura", "⚖"], ["tribunale", "/doj/tribunale", "Tribunale", "▤"], ["vittime", "/doj/vittime", "Vittime e assistenza", "✚"],
+  const roleUsers = value => String(value || "DOJ").split(",").map(v => v.trim()).filter(Boolean);
+  const isDojUser = sameText(user, process.env.DOJ_USER || "DOJ");
+  const canSeeCases = isDojUser || roleUsers(process.env.DOJ_ATTORNEY_USERS).some(v => sameText(v, user)) || roleUsers(process.env.DOJ_JUDGE_USERS).some(v => sameText(v, user));
+  const dojNavItems = [
+    ["dashboard", "/doj", "Dashboard", "⌂"], ...(canSeeCases ? [["casi", "/doj/casi", "Fascicoli", "§"]] : []), ["mandati", "/doj/mandati", "Mandati", "◈"],
+    ["procura", "/doj/procura", "Procura", "⚖"], ["tribunale", "/doj/tribunale", "Udienze", "▤"], ["vittime", "/doj/vittime", "Vittime", "✚"],
     ["documenti", "/doj/documenti", "Documenti legali", "▧"], ["audit", "/doj/audit", "Audit e controlli", "✓"]
-  ].map(([id, href, label, icon]) => `<a class="nav-item ${active === id ? "active" : ""}" href="${href}"><span class="nav-icon">${icon}</span><span>${label}</span></a>`).join("");
+  ];
+  const dojNav = dojNavItems.map(([id, href, label, icon]) => `<a class="nav-item ${active === id ? "active" : ""}" href="${href}"><span class="nav-icon">${icon}</span><span>${label}</span></a>`).join("");
   let html = pageLayout(title, body, active, user);
   html = html.replace(/(<a href="\/doj" class="switch-item )([^"]*)/, "$1selected").replace(/(<a href="\/" class="switch-item )selected/, "$1");
   html = html.replace(/<div class="brand">[\s\S]*?<\/div><div class="portal-switch">/, '<div class="brand"><div class="crest-group"><img class="crest" src="/doj.png" alt="DOJ"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="MPRP Patrol"></div><div><strong>DOJ</strong><small>MPRP • Portale giudiziario</small></div></div><div class="portal-switch">');
@@ -398,6 +402,23 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
   const dojExpectedUser = process.env.DOJ_USER || "DOJ";
   const dojExpectedPassword = process.env.DOJ_PASSWORD || "DOJ";
   const dojSessionSecret = process.env.DOJ_SECRET || sessionSecret;
+  const parseDojUsers = (value, fallback = "DOJ") => String(value || fallback).split(",").map(v => v.trim()).filter(Boolean);
+  const dojAttorneyUsers = parseDojUsers(process.env.DOJ_ATTORNEY_USERS);
+  const dojJudgeUsers = parseDojUsers(process.env.DOJ_JUDGE_USERS);
+  const dojProsecutorUsers = parseDojUsers(process.env.DOJ_PROSECUTOR_USERS);
+  const hasDojRole = (user, role) => {
+    if (sameText(user, dojExpectedUser)) return true;
+    const lists = { attorney: dojAttorneyUsers, judge: dojJudgeUsers, prosecutor: dojProsecutorUsers };
+    return (lists[role] || []).some(name => sameText(name, user));
+  };
+  const requireDojRole = (req, res, roles) => {
+    const allowed = roles.some(role => hasDojRole(req.portalUser, role));
+    if (!allowed) {
+      res.status(403).send(dojLayout("DOJ • Accesso negato", '<div class="card"><h1>Accesso negato</h1><p class="subtle">Non disponi dei permessi necessari per questa funzione.</p><a class="button secondary" href="/doj">Torna al DOJ</a></div>', "dashboard", req.portalUser));
+      return false;
+    }
+    return true;
+  };
 
   app.get("/health", (req, res) => res.status(200).json({ ok: true, service: "mprp-portale", time: new Date().toISOString() }));
   app.get("/login", (req, res) => res.send(loginPage("", String(req.query.area || ""))));
@@ -720,19 +741,38 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
   });
 
   app.get("/doj/casi", (req,res) => {
+    if (!requireDojRole(req, res, ["attorney", "judge"])) return;
     const db=initDojDb(dojDatabaseFile); const q=String(req.query.q||"").toLowerCase().trim();
     const cases=Object.values(db.casi).filter(c=>!q||`${c.id} ${c.titolo} ${c.responsabile} ${c.divisione} ${c.soggetti}`.toLowerCase().includes(q)).sort((a,b)=>new Date(b.creatoIl)-new Date(a.creatoIl));
     const rows=cases.map(c=>`<tr><td class="mono">${escapeHtml(c.id)}</td><td><strong>${escapeHtml(c.titolo)}</strong><br><span class="subtle">${escapeHtml(c.divisione||"Criminal")}</span></td><td>${escapeHtml(c.responsabile||"-")}</td><td><span class="status ${c.stato==="CHIUSO"?"ok":"warn"}">${escapeHtml(c.stato)}</span></td><td>${formatDate(c.creatoIl)}</td></tr>`).join("");
-    const body=`<div class="topbar"><div><h1>Fascicoli e casi</h1><p>Registro centrale dei procedimenti del DOJ.</p></div><div class="live">${cases.length} fascicoli</div></div><div class="card"><form class="search"><input class="input" name="q" value="${escapeHtml(req.query.q||"")}" placeholder="ID, titolo, divisione o responsabile"><button>Cerca</button></form><div class="table-wrap" style="margin-top:15px">${rows?`<table><thead><tr><th>ID</th><th>Fascicolo</th><th>Responsabile</th><th>Stato</th><th>Apertura</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">Nessun fascicolo trovato.</div>'}</div></div>`;
+    const canCreate=hasDojRole(req.portalUser,"attorney");
+    const form=canCreate?`<div class="card" style="margin-bottom:16px"><div class="section-head"><h2>Nuovo fascicolo</h2><span class="subtle">Creazione riservata agli avvocati</span></div><form method="post" class="form-grid"><div class="field"><label>Titolo</label><input class="input" name="titolo" required maxlength="180" placeholder="Titolo del fascicolo"></div><div class="field"><label>Divisione</label><select name="divisione" class="input"><option>Criminal</option><option>Civil</option><option>Appellate</option><option>National Security</option></select></div><div class="field"><label>Responsabile</label><input class="input" name="responsabile" maxlength="120" value="${escapeHtml(req.portalUser)}"></div><div class="field"><label>Soggetti</label><input class="input" name="soggetti" maxlength="300" placeholder="Soggetti collegati al fascicolo"></div><div class="field full"><label>Note</label><textarea class="input" name="note" maxlength="1200" placeholder="Informazioni iniziali del procedimento"></textarea></div><div class="field full"><button type="submit">Crea fascicolo</button></div></form></div>`:"";
+    const body=`<div class="topbar"><div><h1>Fascicoli</h1><p>Registro riservato dei procedimenti del DOJ.</p></div><div class="live">${cases.length} fascicoli</div></div>${form}<div class="card"><form class="search"><input class="input" name="q" value="${escapeHtml(req.query.q||"")}" placeholder="ID, titolo, divisione o responsabile"><button>Cerca</button></form><div class="table-wrap" style="margin-top:15px">${rows?`<table><thead><tr><th>ID</th><th>Fascicolo</th><th>Responsabile</th><th>Stato</th><th>Apertura</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">Nessun fascicolo trovato.</div>'}</div></div>`;
     res.send(dojLayout("DOJ • Fascicoli",body,"casi",req.portalUser));
   });
 
+  app.post("/doj/casi", (req,res) => {
+    if (!requireDojRole(req, res, ["attorney"])) return;
+    const db=initDojDb(dojDatabaseFile); const titolo=String(req.body.titolo||"").trim();
+    if (!titolo) return res.status(400).send(dojLayout("DOJ • Fascicoli", '<div class="card"><h1>Dati mancanti</h1><p class="subtle">Il titolo del fascicolo è obbligatorio.</p><a class="button secondary" href="/doj/casi">Torna ai fascicoli</a></div>', "casi", req.portalUser));
+    const id=generateRecordId("CASO"); db.casi[id]={id,titolo,divisione:String(req.body.divisione||"Criminal"),responsabile:String(req.body.responsabile||req.portalUser).trim(),soggetti:String(req.body.soggetti||"").trim(),note:String(req.body.note||"").trim(),stato:"APERTO",creatoDa:req.portalUser,creatoIl:new Date().toISOString()};
+    db.audit.push({azione:"Creazione fascicolo",esito:"OK",operatore:req.portalUser,dettagli:`${id} • ${titolo}`,data:new Date().toISOString()}); saveDojDb(dojDatabaseFile,db); res.redirect("/doj/casi");
+  });
+
   app.get("/doj/mandati", (req,res) => {
-    const db=initDojDb(dojDatabaseFile); const q=String(req.query.q||"").toLowerCase().trim();
-    const warrants=Object.values(db.mandati).filter(w=>!q||`${w.id} ${w.soggetto} ${w.tipo} ${w.caso}`.toLowerCase().includes(q)).sort((a,b)=>new Date(b.emessoIl)-new Date(a.emessoIl));
+    const db=initDojDb(dojDatabaseFile); const q=String(req.query.q||"").toLowerCase().trim(); const warrants=Object.values(db.mandati).filter(w=>!q||`${w.id} ${w.soggetto} ${w.tipo} ${w.caso}`.toLowerCase().includes(q)).sort((a,b)=>new Date(b.emessoIl)-new Date(a.emessoIl));
     const cards=warrants.map(w=>`<div class="record"><h3>${escapeHtml(w.id)} <span class="status ${w.stato==="ATTIVO"?"bad":"ok"}">${escapeHtml(w.stato)}</span></h3><p><strong>Soggetto:</strong> ${escapeHtml(w.soggetto)} • <strong>Tipo:</strong> ${escapeHtml(w.tipo)}</p><p><strong>Fascicolo:</strong> ${escapeHtml(w.caso||"-")} • <strong>Emesso:</strong> ${formatDate(w.emessoIl)}</p><p>${escapeHtml(w.note||"Nessuna annotazione.")}</p></div>`).join("")||'<div class="empty">Nessun mandato registrato.</div>';
-    const body=`<div class="topbar"><div><h1>Mandati e ordini</h1><p>Controllo degli ordini giudiziari e del loro stato.</p></div><div class="live">${warrants.length} risultati</div></div><div class="card"><form class="search"><input class="input" name="q" value="${escapeHtml(req.query.q||"")}" placeholder="ID, soggetto, tipo o fascicolo"><button>Cerca</button></form><div style="margin-top:16px">${cards}</div></div>`;
-    res.send(dojLayout("DOJ • Mandati",body,"mandati",req.portalUser));
+    const canCreate=hasDojRole(req.portalUser,"prosecutor")||hasDojRole(req.portalUser,"judge");
+    const form=canCreate?`<div class="card" style="margin-bottom:16px"><div class="section-head"><h2>Nuovo mandato</h2><span class="subtle">Disponibile a procuratori e giudici</span></div><form method="post" class="form-grid"><div class="field"><label>Soggetto</label><input class="input" name="soggetto" required maxlength="180"></div><div class="field"><label>Tipo</label><input class="input" name="tipo" required maxlength="120" placeholder="Mandato di arresto, perquisizione…"></div><div class="field"><label>Fascicolo</label><input class="input mono" name="caso" maxlength="80" placeholder="ID fascicolo"></div><div class="field"><label>Stato</label><select name="stato" class="input"><option>ATTIVO</option><option>ESEGUITO</option><option>REVOCATO</option></select></div><div class="field full"><label>Note</label><textarea class="input" name="note" maxlength="1200"></textarea></div><div class="field full"><button type="submit">Crea mandato</button></div></form></div>`:"";
+    const body=`<div class="topbar"><div><h1>Mandati</h1><p>Controllo degli ordini giudiziari del DOJ.</p></div><div class="live">${warrants.length} risultati</div></div>${form}<div class="card"><form class="search"><input class="input" name="q" value="${escapeHtml(req.query.q||"")}" placeholder="ID, soggetto, tipo o fascicolo"><button>Cerca</button></form><div style="margin-top:16px">${cards}</div></div>`; res.send(dojLayout("DOJ • Mandati",body,"mandati",req.portalUser));
+  });
+
+  app.post("/doj/mandati", (req,res) => {
+    if (!requireDojRole(req, res, ["prosecutor","judge"])) return;
+    const db=initDojDb(dojDatabaseFile); const soggetto=String(req.body.soggetto||"").trim(); const tipo=String(req.body.tipo||"").trim();
+    if (!soggetto || !tipo) return res.status(400).send(dojLayout("DOJ • Mandati", '<div class="card"><h1>Dati mancanti</h1><p class="subtle">Soggetto e tipo sono obbligatori.</p><a class="button secondary" href="/doj/mandati">Torna ai mandati</a></div>', "mandati", req.portalUser));
+    const id=generateRecordId("MANDATO"); db.mandati[id]={id,soggetto,tipo,caso:String(req.body.caso||"").trim(),stato:String(req.body.stato||"ATTIVO"),note:String(req.body.note||"").trim(),emessoDa:req.portalUser,emessoIl:new Date().toISOString()};
+    db.audit.push({azione:"Creazione mandato",esito:"OK",operatore:req.portalUser,dettagli:`${id} • ${soggetto}`,data:new Date().toISOString()}); saveDojDb(dojDatabaseFile,db); res.redirect("/doj/mandati");
   });
 
   app.get("/doj/procura", (req,res) => {
@@ -743,16 +783,31 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
   });
 
   app.get("/doj/tribunale", (req,res) => {
-    const db=initDojDb(dojDatabaseFile); const hearings=Object.values(db.udienze).sort((a,b)=>new Date(a.data)-new Date(b.data));
-    const rows=hearings.map(h=>`<tr><td>${formatDate(h.data)}</td><td>${escapeHtml(h.aula||"-")}</td><td>${escapeHtml(h.tipo||"Udienza")}</td><td>${escapeHtml(h.caso||"-")}</td><td>${escapeHtml(h.giudice||"-")}</td><td><span class="status ${h.stato==="CONCLUSA"?"ok":"warn"}">${escapeHtml(h.stato||"PROGRAMMATA")}</span></td></tr>`).join("");
-    const body=`<div class="topbar"><div><h1>Tribunale e udienze</h1><p>Calendario operativo dei procedimenti giudiziari.</p></div><div class="live">${hearings.length} udienze</div></div><div class="card"><div class="table-wrap">${rows?`<table><thead><tr><th>Data</th><th>Aula</th><th>Tipo</th><th>Fascicolo</th><th>Giudice</th><th>Stato</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">Nessuna udienza programmata.</div>'}</div></div>`;
-    res.send(dojLayout("DOJ • Tribunale",body,"tribunale",req.portalUser));
+    const db=initDojDb(dojDatabaseFile); const hearings=Object.values(db.udienze).sort((a,b)=>new Date(a.data)-new Date(b.data)); const rows=hearings.map(h=>`<tr><td>${formatDate(h.data)}</td><td>${escapeHtml(h.aula||"-")}</td><td>${escapeHtml(h.tipo||"Udienza")}</td><td>${escapeHtml(h.caso||"-")}</td><td>${escapeHtml(h.giudice||"-")}</td><td><span class="status ${h.stato==="CONCLUSA"?"ok":"warn"}">${escapeHtml(h.stato||"PROGRAMMATA")}</span></td></tr>`).join("");
+    const form=hasDojRole(req.portalUser,"judge")?`<div class="card" style="margin-bottom:16px"><div class="section-head"><h2>Programma udienza</h2><span class="subtle">Solo il giudice può programmare</span></div><form method="post" class="form-grid"><div class="field"><label>Data e ora</label><input class="input" type="datetime-local" name="data" required></div><div class="field"><label>Aula</label><input class="input" name="aula" required maxlength="100"></div><div class="field"><label>Tipo</label><input class="input" name="tipo" value="Udienza" required maxlength="100"></div><div class="field"><label>Fascicolo</label><input class="input mono" name="caso" maxlength="80"></div><div class="field full"><label>Giudice</label><input class="input" name="giudice" value="${escapeHtml(req.portalUser)}" maxlength="120"></div><div class="field full"><button type="submit">Programma udienza</button></div></form></div>`:"";
+    const body=`<div class="topbar"><div><h1>Udienze</h1><p>Calendario pubblico delle udienze del DOJ.</p></div><div class="live">${hearings.length} udienze</div></div>${form}<div class="card"><div class="table-wrap">${rows?`<table><thead><tr><th>Data</th><th>Aula</th><th>Tipo</th><th>Fascicolo</th><th>Giudice</th><th>Stato</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">Nessuna udienza programmata.</div>'}</div></div>`; res.send(dojLayout("DOJ • Udienze",body,"tribunale",req.portalUser));
+  });
+
+  app.post("/doj/tribunale", (req,res) => {
+    if (!requireDojRole(req, res, ["judge"])) return;
+    const db=initDojDb(dojDatabaseFile); const raw=String(req.body.data||"").trim(); if (!raw) return res.status(400).send(dojLayout("DOJ • Udienze", '<div class="card"><h1>Dati mancanti</h1><p class="subtle">Data e ora sono obbligatorie.</p><a class="button secondary" href="/doj/tribunale">Torna alle udienze</a></div>', "tribunale", req.portalUser));
+    const date=new Date(raw); if (Number.isNaN(date.getTime())) return res.status(400).send(dojLayout("DOJ • Udienze", '<div class="card"><h1>Data non valida</h1><a class="button secondary" href="/doj/tribunale">Torna alle udienze</a></div>', "tribunale", req.portalUser));
+    const id=generateRecordId("UDIENZA"); db.udienze[id]={id,data:date.toISOString(),aula:String(req.body.aula||"").trim(),tipo:String(req.body.tipo||"Udienza").trim(),caso:String(req.body.caso||"").trim(),giudice:String(req.body.giudice||req.portalUser).trim(),stato:"PROGRAMMATA",programmataDa:req.portalUser};
+    db.audit.push({azione:"Programmazione udienza",esito:"OK",operatore:req.portalUser,dettagli:`${id} • ${db.udienze[id].data}`,data:new Date().toISOString()}); saveDojDb(dojDatabaseFile,db); res.redirect("/doj/tribunale");
   });
 
   app.get("/doj/vittime", (req,res) => {
-    const db=initDojDb(dojDatabaseFile); const victims=Object.values(db.vittime); const cards=victims.map(v=>`<div class="record"><h3>${escapeHtml(v.id)} • ${escapeHtml(v.nome)}</h3><p><strong>Fascicolo:</strong> ${escapeHtml(v.caso||"-")} • <strong>Stato:</strong> ${escapeHtml(v.stato||"In carico")}</p><p><strong>Referente:</strong> ${escapeHtml(v.referente||"Victim Services")}</p><p>${escapeHtml(v.note||"Nessuna nota riservata.")}</p></div>`).join("")||'<div class="empty">Nessuna pratica vittime registrata.</div>';
-    const body=`<div class="topbar"><div><h1>Vittime e assistenza</h1><p>Registro delle prese in carico e dei servizi di supporto.</p></div><div class="live">${victims.length} pratiche</div></div><div class="card"><div class="notice">Area riservata: i dati devono essere trattati secondo le autorizzazioni interne e il principio di minima esposizione.</div>${cards}</div>`;
-    res.send(dojLayout("DOJ • Vittime",body,"vittime",req.portalUser));
+    const db=initDojDb(dojDatabaseFile); const victims=Object.values(db.vittime); const cards=victims.map(v=>`<div class="record"><h3>${escapeHtml(v.id)} • ${escapeHtml(v.nome)} <span class="status ${v.importanza==="Alto"?"bad":v.importanza==="Medio"?"warn":"ok"}">${escapeHtml(v.importanza||"Basso")}</span></h3><p><strong>Fascicolo:</strong> ${escapeHtml(v.caso||"-")} • <strong>Stato:</strong> ${escapeHtml(v.stato||"In carico")}</p><p><strong>Referente:</strong> ${escapeHtml(v.referente||"Victim Services")}</p><p>${escapeHtml(v.note||"Nessuna nota riservata.")}</p></div>`).join("")||'<div class="empty">Nessuna pratica vittime registrata.</div>';
+    const form=hasDojRole(req.portalUser,"judge")?`<div class="card" style="margin-bottom:16px"><div class="section-head"><h2>Aggiungi soggetto al programma vittime</h2><span class="subtle">Solo il giudice può aggiungere soggetti</span></div><form method="post" class="form-grid"><div class="field"><label>Nome soggetto</label><input class="input" name="nome" required maxlength="180"></div><div class="field"><label>Importanza</label><select class="input" name="importanza" required><option>Basso</option><option>Medio</option><option>Alto</option></select></div><div class="field"><label>Fascicolo</label><input class="input mono" name="caso" maxlength="80"></div><div class="field"><label>Referente</label><input class="input" name="referente" value="Victim Services" maxlength="120"></div><div class="field full"><label>Note</label><textarea class="input" name="note" maxlength="1200"></textarea></div><div class="field full"><button type="submit">Aggiungi soggetto</button></div></form></div>`:"";
+    const body=`<div class="topbar"><div><h1>Vittime</h1><p>Programma vittime e assistenza del DOJ.</p></div><div class="live">${victims.length} pratiche</div></div>${form}<div class="card"><div class="notice">Area riservata: i dati devono essere trattati secondo le autorizzazioni interne e il principio di minima esposizione.</div>${cards}</div>`; res.send(dojLayout("DOJ • Vittime",body,"vittime",req.portalUser));
+  });
+
+  app.post("/doj/vittime", (req,res) => {
+    if (!requireDojRole(req, res, ["judge"])) return;
+    const db=initDojDb(dojDatabaseFile); const nome=String(req.body.nome||"").trim(); const importanza=String(req.body.importanza||"");
+    if (!nome || !["Basso","Medio","Alto"].includes(importanza)) return res.status(400).send(dojLayout("DOJ • Vittime", '<div class="card"><h1>Dati mancanti</h1><p class="subtle">Nome e importanza sono obbligatori.</p><a class="button secondary" href="/doj/vittime">Torna alle vittime</a></div>', "vittime", req.portalUser));
+    const id=generateRecordId("VITTIMA"); db.vittime[id]={id,nome,importanza,caso:String(req.body.caso||"").trim(),referente:String(req.body.referente||"Victim Services").trim(),note:String(req.body.note||"").trim(),stato:"In carico",aggiuntoDa:req.portalUser,aggiuntoIl:new Date().toISOString()};
+    db.audit.push({azione:"Aggiunta soggetto programma vittime",esito:"OK",operatore:req.portalUser,dettagli:`${id} • ${nome} • ${importanza}`,data:new Date().toISOString()}); saveDojDb(dojDatabaseFile,db); res.redirect("/doj/vittime");
   });
 
   app.get("/doj/documenti", (req,res) => {
