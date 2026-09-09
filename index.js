@@ -1456,9 +1456,22 @@ async function accettaDocumento(interaction, userId) {
   delete database.richiesteDocumenti[userId];
   salvaDatabase(database);
 
+  let nomeDiscord = `<@${userId}>`;
+  try {
+    const utenteDiscord = await client.users.fetch(userId);
+    nomeDiscord = utenteDiscord.globalName
+      ? `${utenteDiscord.globalName} (@${utenteDiscord.username})`
+      : `@${utenteDiscord.username}`;
+  } catch {}
+
   await trasformaInCittadino(interaction.guild, userId);
   await interaction.update({
-    embeds: [creaEmbedDocumento(richiesta, "✅ Documento accettato").setColor(COLORI.verde).setDescription(`Accettato da ${interaction.user}.`)],
+    embeds: [
+      creaEmbedDocumento(richiesta, "✅ Documento accettato")
+        .setColor(COLORI.verde)
+        .setDescription(`Accettato da ${interaction.user}.`)
+        .addFields({ name: "Nome Discord", value: nomeDiscord, inline: true })
+    ],
     components: [creaPulsantiApprovazioneDisabilitati(userId)]
   });
 
@@ -1466,7 +1479,7 @@ async function accettaDocumento(interaction, userId) {
     const utenteDiscord = await client.users.fetch(userId);
     await utenteDiscord.send({
       embeds: [new EmbedBuilder().setColor(COLORI.verde).setTitle("✅ Documento accettato")
-        .setDescription("Il documento è stato accettato. Hai ricevuto il ruolo Cittadino e ora puoi usare `/portafoglio`.")]
+        .setDescription(`Il documento di **${nomeDiscord}** è stato accettato. Hai ricevuto il ruolo Cittadino e ora puoi usare \`/portafoglio\`.`)]
     });
   } catch {}
 }
@@ -1486,14 +1499,32 @@ async function rifiutaDocumento(interaction, userId) {
 
   delete database.richiesteDocumenti[userId];
   salvaDatabase(database);
+
+  let nomeDiscord = `<@${userId}>`;
+  let utenteDiscord = null;
+  try {
+    utenteDiscord = await client.users.fetch(userId);
+    nomeDiscord = utenteDiscord.globalName
+      ? `${utenteDiscord.globalName} (@${utenteDiscord.username})`
+      : `@${utenteDiscord.username}`;
+  } catch {}
+
   await interaction.update({
-    embeds: [creaEmbedDocumento(richiesta, "❌ Documento rifiutato").setColor(COLORI.rosso).setDescription(`Rifiutato da ${interaction.user}.`)],
+    embeds: [
+      creaEmbedDocumento(richiesta, "❌ Documento rifiutato")
+        .setColor(COLORI.rosso)
+        .setDescription(`Rifiutato da ${interaction.user}.`)
+        .addFields({ name: "Nome Discord", value: nomeDiscord, inline: true })
+    ],
     components: [creaPulsantiApprovazioneDisabilitati(userId)]
   });
 
   try {
-    const utenteDiscord = await client.users.fetch(userId);
-    await utenteDiscord.send({ embeds: [new EmbedBuilder().setColor(COLORI.rosso).setTitle("❌ Documento rifiutato").setDescription("Puoi correggere i dati e inviare una nuova richiesta.")] });
+    if (!utenteDiscord) utenteDiscord = await client.users.fetch(userId);
+    await utenteDiscord.send({
+      embeds: [new EmbedBuilder().setColor(COLORI.rosso).setTitle("❌ Documento rifiutato")
+        .setDescription(`La richiesta del documento di **${nomeDiscord}** è stata rifiutata. Puoi correggere i dati e inviare una nuova richiesta.`)]
+    });
   } catch {}
 }
 
