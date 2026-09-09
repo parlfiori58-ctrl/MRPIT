@@ -59,7 +59,7 @@ function createFineEmbed(fine, title = "📄 Verbale di contravvenzione") {
   return new EmbedBuilder()
     .setColor(paid ? 0x57f287 : 0xed4245)
     .setTitle(title)
-    .setDescription("Verbale amministrativo registrato nel database civile IPRP.")
+    .setDescription("Verbale amministrativo registrato nel database civile MPRP.")
     .addFields(
       {
         name: "Informazioni sul sanzionato",
@@ -82,7 +82,7 @@ function createFineEmbed(fine, title = "📄 Verbale di contravvenzione") {
         inline: false
       }
     )
-    .setFooter({ text: "IPRP • Registro sanzioni" })
+    .setFooter({ text: "MPRP • Registro sanzioni" })
     .setTimestamp(new Date(fine.creataIl));
 }
 
@@ -90,7 +90,7 @@ function createArrestEmbed(arrest, title = "🚔 Registro di arresto") {
   return new EmbedBuilder()
     .setColor(0xed4245)
     .setTitle(title)
-    .setDescription("Rapporto di arresto registrato nella fedina penale civile IPRP.")
+    .setDescription("Rapporto di arresto registrato nella fedina penale civile MPRP.")
     .addFields(
       {
         name: "Generalità dell’arrestato",
@@ -108,7 +108,7 @@ function createArrestEmbed(arrest, title = "🚔 Registro di arresto") {
         inline: false
       }
     )
-    .setFooter({ text: "IPRP • Fedina penale" })
+    .setFooter({ text: "MPRP • Fedina penale" })
     .setTimestamp(new Date(arrest.registratoIl));
 }
 
@@ -153,14 +153,13 @@ function verifySession(token, secret) {
   }
 }
 
-function pageLayout(title, body, active = "dashboard", user = "FDO") {
+function pageLayout(title, body, active = "dashboard", user = "Dipartimento") {
   const nav = [
     ["dashboard", "/", "Dashboard", "▦"],
     ["cittadini", "/cittadini", "Cittadini", "♙"],
     ["multe", "/multe", "Multe", "▤"],
     ["arresti", "/arresti", "Fedina penale", "⚖"],
-    ["targhe", "/targhe", "Veicoli", "◇"],
-    ["doj", "/doj-login", "DOJ • Giustizia", "⚖"]
+    ["targhe", "/targhe", "Veicoli", "◇"]
   ].map(([id, href, label, icon]) => `
     <a class="nav-item ${active === id ? "active" : ""}" href="${href}">
       <span class="nav-icon">${icon}</span><span>${label}</span>
@@ -177,39 +176,41 @@ function pageLayout(title, body, active = "dashboard", user = "FDO") {
   <title>${escapeHtml(title)} • Portale dei dipartimenti MPRP</title>
   <style>
     :root{
-      --bg:#07101f;--bg2:#0a1628;--panel:#101e33;--panel2:#142640;--line:#213a5c;
-      --text:#f1f6ff;--muted:#9fb3ce;--blue:#4d98ff;--cyan:#39d6ff;--green:#38d996;
-      --red:#ff6674;--yellow:#f7c95d;--purple:#a879ff;--shadow:0 20px 60px rgba(0,0,0,.28)
+      --bg:#e9e3d7;--bg2:#f6f3ec;--panel:#fffdf8;--panel2:#f3eee4;--line:#d4c8b6;
+      --text:#241f1a;--muted:#756b60;--blue:#3d5870;--cyan:#7b6a4d;--green:#3f6d4d;
+      --red:#8b3e3e;--yellow:#a77b2f;--purple:#6d5a72;--brown:#4b3527;--gold:#b28a43;--shadow:0 14px 35px rgba(67,49,34,.10)
     }
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:
-      radial-gradient(circle at 82% -5%,rgba(57,214,255,.15),transparent 27%),
-      radial-gradient(circle at 5% 5%,rgba(77,152,255,.18),transparent 30%),
-      linear-gradient(145deg,var(--bg),var(--bg2));color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
-    a{color:inherit}.shell{display:grid;grid-template-columns:255px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;padding:24px 17px;border-right:1px solid var(--line);background:rgba(7,16,31,.88);backdrop-filter:blur(18px);display:flex;flex-direction:column}
-    .brand{display:flex;gap:13px;align-items:center;padding:8px 8px 25px}.crest{width:54px;height:54px;border-radius:50%;object-fit:cover;display:block;border:1px solid rgba(128,184,255,.45);box-shadow:0 12px 34px rgba(0,0,0,.38)}.brand strong{font-size:16px;letter-spacing:.04em}.brand small{display:block;color:var(--muted);margin-top:3px}
-    .nav{display:grid;gap:7px}.nav-item{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--muted);padding:12px 13px;border-radius:12px;border:1px solid transparent;transition:.18s}.nav-item:hover{color:#fff;background:rgba(20,38,64,.75)}.nav-item.active{color:#fff;background:linear-gradient(90deg,rgba(77,152,255,.22),rgba(57,214,255,.07));border-color:rgba(77,152,255,.33)}.nav-icon{width:26px;text-align:center;font-size:18px}
-    .sidebar-bottom{margin-top:auto}.userbox{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:13px}.userbox small{color:var(--muted)}.logout{display:block;margin-top:10px;text-decoration:none;color:var(--red);font-size:13px}
-    .content{min-width:0;padding:26px 30px 55px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}.topbar h1{font-size:clamp(26px,4vw,43px);margin:0;letter-spacing:-.03em}.topbar p{color:var(--muted);margin:7px 0 0}.live{display:flex;align-items:center;gap:8px;border:1px solid rgba(56,217,150,.28);background:rgba(56,217,150,.08);color:#91f0c6;padding:9px 13px;border-radius:999px;white-space:nowrap}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(56,217,150,.11)}
-    .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}.card{background:linear-gradient(180deg,rgba(20,38,64,.96),rgba(16,30,51,.96));border:1px solid var(--line);border-radius:18px;padding:19px;box-shadow:var(--shadow)}.span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
+      linear-gradient(rgba(255,255,255,.34),rgba(255,255,255,.34)),
+      radial-gradient(circle at 85% 0,rgba(178,138,67,.12),transparent 28%),
+      linear-gradient(135deg,var(--bg),var(--bg2));color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    a{color:inherit}.shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;padding:20px 16px;border-right:1px solid #c7b9a5;background:linear-gradient(180deg,#4b3527 0%,#3a2a20 100%);display:flex;flex-direction:column;box-shadow:8px 0 28px rgba(56,39,27,.12)}
+    .brand{display:flex;gap:12px;align-items:center;padding:9px 8px 24px;border-bottom:1px solid rgba(255,244,220,.18);margin-bottom:16px}.crest-group{display:flex;align-items:center;gap:6px}.crest-secondary{width:42px;height:42px;border-radius:10px;object-fit:cover;border:2px solid rgba(255,245,220,.55);box-shadow:0 8px 20px rgba(0,0,0,.24)}.crest{width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;border:2px solid rgba(255,245,220,.65);box-shadow:0 10px 24px rgba(0,0,0,.25)}.brand strong{font-size:15px;letter-spacing:.07em;color:#fff8eb}.brand small{display:block;color:#d8c9b5;margin-top:4px}
+    .nav{display:grid;gap:5px}.nav-item{display:flex;align-items:center;gap:12px;text-decoration:none;color:#d8c9b5;padding:12px 13px;border-radius:8px;border:1px solid transparent;transition:.18s}.nav-item:hover{color:#fff8eb;background:rgba(255,245,220,.08)}.nav-item.active{color:#fff;background:linear-gradient(90deg,rgba(178,138,67,.42),rgba(178,138,67,.12));border-color:rgba(223,191,129,.36);box-shadow:inset 3px 0 0 #d0a75b}.nav-icon{width:26px;text-align:center;font-size:17px}
+    .portal-switch{display:grid;gap:6px;margin:0 0 16px;padding-bottom:15px;border-bottom:1px solid rgba(255,244,220,.18)}.switch-item{display:flex;align-items:center;gap:10px;text-decoration:none;color:#d8c9b5;padding:10px 11px;border-radius:8px;border:1px solid rgba(255,245,220,.12);background:rgba(255,255,255,.035)}.switch-item span:first-child{font-size:18px}.switch-item b{display:block;font-size:12px}.switch-item small{display:block;color:#b9a995;font-size:10px;margin-top:2px}.switch-item.selected{background:rgba(208,167,91,.2);border-color:rgba(223,191,129,.4);color:#fff8eb}.sidebar-bottom{margin-top:auto}.userbox{border:1px solid rgba(255,245,220,.18);background:rgba(255,255,255,.06);border-radius:9px;padding:13px;color:#fff8eb}.userbox small{color:#cdbda9}.logout{display:block;margin-top:10px;text-decoration:none;color:#e8b7a8;font-size:13px}
+    .content{min-width:0;padding:26px 30px 55px;position:relative}.content:before{content:"MPRP • DEPARTMENT SERVICES";display:block;color:#9a8b78;font-size:10px;letter-spacing:.16em;font-weight:800;margin-bottom:12px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px;padding-bottom:18px;border-bottom:3px solid var(--brown)}.topbar h1{font-size:clamp(26px,4vw,43px);margin:0;letter-spacing:-.03em;color:#2f261f}.topbar p{color:var(--muted);margin:7px 0 0}.live{display:flex;align-items:center;gap:8px;border:1px solid #c8b58f;background:#f5eddb;color:#5f4d32;padding:9px 13px;border-radius:6px;white-space:nowrap;font-weight:700}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(63,109,77,.11)}
+    .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}.card{background:linear-gradient(180deg,rgba(255,253,248,.98),rgba(248,244,236,.98));border:1px solid var(--line);border-radius:8px;padding:19px;box-shadow:var(--shadow)}.span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
     .stat-card{position:relative;overflow:hidden}.stat-card:after{content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-35px;top:-38px;background:radial-gradient(circle,rgba(77,152,255,.25),transparent 70%)}.label{color:var(--muted);font-size:13px}.stat{font-size:37px;font-weight:850;margin-top:7px;letter-spacing:-.03em}.accent-blue{color:#80b8ff}.accent-green{color:#74e6b5}.accent-red{color:#ff8c97}.accent-yellow{color:#f8dc8c}.accent-purple{color:#c4a6ff}
     .section-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:15px}.section-head h2{margin:0;font-size:19px}.subtle{color:var(--muted);font-size:13px}.bars{display:grid;gap:15px}.bar-row{display:grid;grid-template-columns:120px minmax(0,1fr) 45px;gap:12px;align-items:center}.track{height:12px;border-radius:999px;background:#071426;border:1px solid var(--line);overflow:hidden}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
-    .search{display:flex;gap:9px;flex-wrap:wrap}.input,select{min-width:180px;flex:1;background:#09162a;color:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;outline:none}.input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(77,152,255,.1)}.button,button{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:12px;padding:12px 16px;background:linear-gradient(135deg,var(--blue),#3374df);color:white;font-weight:750;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(77,152,255,.18)}.button.secondary{background:var(--panel2);box-shadow:none;border:1px solid var(--line)}.button.danger{background:#7f2430;box-shadow:none}.button.success{background:#176b4b;box-shadow:none}.actions{display:flex;gap:10px;flex-wrap:wrap}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:grid;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.field textarea{min-height:110px;resize:vertical}.input,textarea,select{width:100%;background:#09162a;color:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 13px;font:inherit;outline:none}.notice{padding:12px 14px;border-radius:10px;border:1px solid rgba(56,217,150,.28);background:rgba(56,217,150,.08);color:#b9f4d7;margin-bottom:16px}.notice.error{border-color:rgba(255,102,116,.35);background:rgba(255,102,116,.08);color:#ffc0c6}
-    table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line);vertical-align:middle}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.table-wrap{overflow:auto}.status{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}.ok{color:#7ce8b9;background:rgba(56,217,150,.12)}.bad{color:#ff9da6;background:rgba(255,102,116,.12)}.warn{color:#ffe09b;background:rgba(247,201,93,.12)}
-    .kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kv div{border:1px solid var(--line);background:#0a172b;border-radius:12px;padding:12px}.kv small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}.record{border:1px solid var(--line);background:#0a172b;border-radius:14px;padding:14px;margin-bottom:10px}.record h3{margin:0 0 8px;font-size:16px}.record p{margin:5px 0;color:#dce8f8}.empty{text-align:center;color:var(--muted);padding:28px;border:1px dashed var(--line);border-radius:13px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.mobile-head{display:none}
-    .donut{width:160px;height:160px;border-radius:50%;display:grid;place-items:center;margin:auto;background:conic-gradient(var(--green) 0 var(--paid),var(--red) var(--paid) 100%);position:relative}.donut:after{content:"";position:absolute;inset:22px;border-radius:50%;background:var(--panel)}.donut-center{position:relative;z-index:2;text-align:center}.donut-center strong{font-size:27px;display:block}
-    @media(max-width:980px){body{padding-bottom:env(safe-area-inset-bottom)}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.shell{grid-template-columns:1fr}.sidebar{position:fixed;left:-290px;top:0;z-index:80;width:min(285px,86vw);height:100dvh;transition:left .22s ease;padding-top:calc(20px + env(safe-area-inset-top));box-shadow:20px 0 60px rgba(0,0,0,.5)}.sidebar.open{left:0}.content{padding:calc(12px + env(safe-area-inset-top)) 13px calc(34px + env(safe-area-inset-bottom))}.mobile-head{display:flex;position:sticky;top:0;z-index:40;align-items:center;justify-content:space-between;margin:-12px -13px 16px;padding:calc(10px + env(safe-area-inset-top)) 14px 11px;background:rgba(7,16,31,.92);border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}.mobile-brand{display:flex;align-items:center;gap:9px}.mobile-logo{width:38px;height:38px;border-radius:50%;object-fit:cover;border:1px solid rgba(128,184,255,.42)}.menu-btn{background:var(--panel);border:1px solid var(--line);box-shadow:none;padding:10px 13px;font-size:18px}.span-3,.span-4,.span-5,.span-6,.span-7,.span-8{grid-column:span 12}.topbar{align-items:flex-start;flex-direction:column;margin-bottom:18px}.topbar h1{font-size:30px}.topbar .actions{width:100%}.topbar .actions .button{flex:1;min-width:135px}.kv{grid-template-columns:1fr}.search{display:grid;grid-template-columns:1fr}.input,select,.search button{width:100%;min-width:0}.card{box-shadow:0 12px 35px rgba(0,0,0,.22)}.table-wrap{margin-left:-4px;margin-right:-4px;-webkit-overflow-scrolling:touch}.table-wrap table{min-width:720px}.record{overflow-wrap:anywhere}}
+    .search{display:flex;gap:9px;flex-wrap:wrap}.input,select{min-width:180px;flex:1;background:#fffdf8;color:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;outline:none}.input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(77,152,255,.1)}.button,button{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:12px;padding:12px 16px;background:linear-gradient(135deg,var(--blue),#3374df);color:white;font-weight:750;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(77,152,255,.18)}.button.secondary{background:var(--panel2);box-shadow:none;border:1px solid var(--line)}.button.danger{background:#7f2430;box-shadow:none}.button.success{background:#176b4b;box-shadow:none}.actions{display:flex;gap:10px;flex-wrap:wrap}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:grid;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.field textarea{min-height:110px;resize:vertical}.input,textarea,select{width:100%;background:#fffdf8;color:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 13px;font:inherit;outline:none}.notice{padding:12px 14px;border-radius:10px;border:1px solid rgba(56,217,150,.28);background:#eaf2ea;color:#3f6d4d;margin-bottom:16px}.notice.error{border-color:rgba(255,102,116,.35);background:rgba(255,102,116,.08);color:#ffc0c6}
+    table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line);vertical-align:middle}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.table-wrap{overflow:auto}.status{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}.ok{color:#7ce8b9;background:rgba(56,217,150,.12)}.bad{color:#ff9da6;background:#f6e8e4}.warn{color:#ffe09b;background:rgba(247,201,93,.12)}
+    .kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kv div{border:1px solid var(--line);background:#f6f1e8;border-radius:12px;padding:12px}.kv small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}.record{border:1px solid var(--line);background:#f6f1e8;border-radius:14px;padding:14px;margin-bottom:10px}.record h3{margin:0 0 8px;font-size:16px}.record p{margin:5px 0;color:#443a31}.empty{text-align:center;color:var(--muted);padding:28px;border:1px dashed var(--line);border-radius:13px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.mobile-head{display:none}
+    .donut{width:160px;height:160px;border-radius:50%;display:grid;place-items:center;margin:auto;background:conic-gradient(var(--green) 0 var(--paid),var(--red) var(--paid) 100%);position:relative}.donut:after{content:"";position:absolute;inset:22px;border-radius:50%;background:#fffdf8}.donut-center{position:relative;z-index:2;text-align:center}.donut-center strong{font-size:27px;display:block}
+    .doj-theme .topbar{border-bottom-color:#243447}.doj-theme .button{background:linear-gradient(135deg,#27384a,#172433)}.doj-theme .button.secondary{background:#f1eee7;color:#2b3745;border-color:#cfc6b8}.doj-theme .accent-blue{color:#2f4b68}.doj-theme .accent-red{color:#8a3f42}.doj-theme .accent-yellow{color:#8c6a2e}.doj-theme .accent-green{color:#3c654d}.doj-theme .card{border-top:3px solid #243447}.doj-theme .record h3{color:#263748}
+    @media(max-width:980px){body{padding-bottom:env(safe-area-inset-bottom)}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.shell{grid-template-columns:1fr}.sidebar{position:fixed;left:-290px;top:0;z-index:80;width:min(285px,86vw);height:100dvh;transition:left .22s ease;padding-top:calc(20px + env(safe-area-inset-top));box-shadow:20px 0 60px rgba(0,0,0,.5)}.sidebar.open{left:0}.content{padding:calc(12px + env(safe-area-inset-top)) 13px calc(34px + env(safe-area-inset-bottom))}.mobile-head{display:flex;position:sticky;top:0;z-index:40;align-items:center;justify-content:space-between;margin:-12px -13px 16px;padding:calc(10px + env(safe-area-inset-top)) 14px 11px;background:rgba(246,243,236,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}.mobile-brand{display:flex;align-items:center;gap:9px}.mobile-logo-group{display:flex;align-items:center;gap:5px}.mobile-logo-secondary{width:30px;height:30px;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,.24)}.mobile-logo{width:38px;height:38px;border-radius:50%;object-fit:cover;border:1px solid rgba(128,184,255,.42)}.menu-btn{background:#fffdf8;border:1px solid var(--line);box-shadow:none;padding:10px 13px;font-size:18px}.span-3,.span-4,.span-5,.span-6,.span-7,.span-8{grid-column:span 12}.topbar{align-items:flex-start;flex-direction:column;margin-bottom:18px}.topbar h1{font-size:30px}.topbar .actions{width:100%}.topbar .actions .button{flex:1;min-width:135px}.kv{grid-template-columns:1fr}.search{display:grid;grid-template-columns:1fr}.input,select,.search button{width:100%;min-width:0}.card{box-shadow:0 12px 35px rgba(0,0,0,.22)}.table-wrap{margin-left:-4px;margin-right:-4px;-webkit-overflow-scrolling:touch}.table-wrap table{min-width:720px}.record{overflow-wrap:anywhere}}
     @media(max-width:560px){.grid{gap:11px}.card{padding:14px;border-radius:14px}.bar-row{grid-template-columns:82px minmax(0,1fr) 32px;gap:8px}.live{font-size:12px;max-width:100%;white-space:normal}.stat{font-size:32px}.section-head{align-items:flex-start}.actions{width:100%}.actions .button{width:100%}th,td{padding:10px 8px}.button,button{min-height:44px}.login{border-radius:20px!important;padding:22px!important}}
   </style>
 </head>
 <body>
 <div class="shell">
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><img class="crest" src="/ced-iprp-logo.png" alt="Logo CED IPRP"><div><strong>PORTALE DEI DIPARTIMENTI</strong><small>MPRP • Sistema informativo dei dipartimenti</small></div></div>
+    <div class="brand"><div class="crest-group"><img class="crest" src="/ced-iprp-logo.png" alt="MPRP"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="MPRP Patrol"></div><div><strong>PORTALE DEI DIPARTIMENTI</strong><small>MPRP • Sistema informativo</small></div></div>
+    <div class="portal-switch"><a href="/" class="switch-item ${String(active).startsWith("doj") ? "" : "selected"}"><span>🏛️</span><span><b>Dipartimenti</b><small>Servizi operativi</small></span></a><a href="/doj" class="switch-item ${String(active).startsWith("doj") ? "selected" : ""}"><span>⚖️</span><span><b>DOJ • Giustizia</b><small>Servizi giudiziari</small></span></a></div>
     <nav class="nav">${nav}</nav>
     <div class="sidebar-bottom"><div class="userbox"><small>Sessione attiva</small><strong style="display:block;margin-top:3px">${escapeHtml(user)}</strong><a class="logout" href="/logout">Esci dal portale</a></div></div>
   </aside>
   <main class="content">
-    <div class="mobile-head"><div class="mobile-brand"><img class="mobile-logo" src="/ced-iprp-logo.png" alt="CED IPRP"><strong>Portale dei dipartimenti</strong></div><button class="menu-btn" aria-label="Apri menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button></div>
+    <div class="mobile-head"><div class="mobile-brand"><div class="mobile-logo-group"><img class="mobile-logo" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="mobile-logo-secondary" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><strong>Portale dei dipartimenti</strong></div><button class="menu-btn" aria-label="Apri menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button></div>
     ${body}
   </main>
 </div>
@@ -223,48 +224,52 @@ function pageLayout(title, body, active = "dashboard", user = "FDO") {
 
 function loginPage(message = "") {
   return `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07101f"><link rel="icon" type="image/png" href="/ced-iprp-logo.png"><link rel="apple-touch-icon" href="/ced-iprp-logo.png"><title>Accesso • Portale dei dipartimenti MPRP</title><style>
-  *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 15% 10%,rgba(77,152,255,.24),transparent 32%),radial-gradient(circle at 90% 0,rgba(168,121,255,.18),transparent 30%),#07101f;color:#f1f6ff;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.login{width:min(430px,100%);background:linear-gradient(180deg,#142640,#101e33);border:1px solid #213a5c;border-radius:24px;padding:28px;box-shadow:0 30px 90px rgba(0,0,0,.45)}.crest{width:112px;height:112px;border-radius:50%;display:block;object-fit:cover;border:1px solid rgba(128,184,255,.48);box-shadow:0 18px 48px rgba(0,0,0,.42);margin:0 auto 18px}h1{margin:0;font-size:31px;letter-spacing:-.03em}p{color:#9fb3ce;line-height:1.55}.field{margin-top:15px}label{display:block;color:#b8c8dd;font-size:13px;margin-bottom:7px}input{width:100%;border:1px solid #29466e;background:#09162a;color:white;border-radius:13px;padding:13px 14px;font:inherit;outline:none}input:focus{border-color:#4d98ff;box-shadow:0 0 0 3px rgba(77,152,255,.1)}button{width:100%;margin-top:20px;border:0;border-radius:13px;padding:13px;background:linear-gradient(135deg,#4d98ff,#3374df);color:white;font-weight:800;font-size:15px;cursor:pointer}.error{background:rgba(255,102,116,.12);border:1px solid rgba(255,102,116,.3);color:#ffb2b9;padding:10px 12px;border-radius:11px;margin-top:15px}.foot{text-align:center;font-size:12px;color:#7088a9;margin-top:18px}</style></head><body><form class="login" method="post" action="/login"><img class="crest" src="/ced-iprp-logo.png" alt="Logo CED IPRP"><h1>Accesso riservato</h1><p>Portale operativo delle Forze dell’Ordine IPRP. Inserisci le credenziali autorizzate.</p>${message ? `<div class="error">${escapeHtml(message)}</div>` : ""}<div class="field"><label>Nome utente</label><input name="username" autocomplete="username" required></div><div class="field"><label>Password</label><input type="password" name="password" autocomplete="current-password" required></div><button type="submit">Accedi al portale</button><div class="foot">Connessione protetta • Accesso riservato agli operatori autorizzati</div></form></body></html>`;
+  *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#e7e0d4,#f7f4ed);color:#241f1a;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.login{width:min(430px,100%);background:#fffdf8;border:1px solid #d4c8b6;border-radius:24px;padding:28px;box-shadow:0 24px 70px rgba(67,49,34,.16)}.crest{width:112px;height:112px;border-radius:50%;display:block;object-fit:cover;border:1px solid rgba(128,184,255,.48);box-shadow:0 18px 48px rgba(0,0,0,.42);margin:0 auto 18px}h1{margin:0;font-size:31px;letter-spacing:-.03em}p{color:#756b60;line-height:1.55}.field{margin-top:15px}label{display:block;color:#6f655b;font-size:13px;margin-bottom:7px}input{width:100%;border:1px solid #29466e;background:#fffdf8;color:white;border-radius:13px;padding:13px 14px;font:inherit;outline:none}input:focus{border-color:#8f7957;box-shadow:0 0 0 3px rgba(77,152,255,.1)}button{width:100%;margin-top:20px;border:0;border-radius:13px;padding:13px;background:linear-gradient(135deg,#5b4432,#3f2e22);color:white;font-weight:800;font-size:15px;cursor:pointer}.error{background:#f6e8e4;border:1px solid rgba(255,102,116,.3);color:#8b3e3e;padding:10px 12px;border-radius:11px;margin-top:15px}.foot{text-align:center;font-size:12px;color:#7088a9;margin-top:18px}</style></head><body><form class="login" method="post" action="/login"><div style="display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:18px"><img class="crest" style="margin:0" src="/ced-iprp-logo.png" alt="Minnesota Police"><img class="crest" style="width:82px;height:82px;margin:0;border-radius:14px" src="/minnesota-state-patrol.png" alt="Minnesota State Patrol"></div><h1>Accesso riservato</h1><p>Portale dei dipartimenti MPRP.</p>${message ? `<div class="error">${escapeHtml(message)}</div>` : ""}<div class="field"><label>Nome utente</label><input name="username" autocomplete="username" required></div><div class="field"><label>Password</label><input type="password" name="password" autocomplete="current-password" required></div><button type="submit">Accedi al portale</button><div class="foot">Accesso riservato</div></form></body></html>`;
 }
 
 
-function createDojStore(databaseFile) {
-  const dir = path.dirname(databaseFile);
-  const file = path.join(dir, "doj_records.json");
-  const read = () => {
-    try {
-      const db = JSON.parse(fs.readFileSync(file, "utf8"));
-      db.fascicoli ||= {};
-      db.UDIENZE ||= {};
-      db.mandati ||= {};
-      db.vittime ||= {};
-      db.documenti ||= {};
-      return db;
-    } catch {
-      return { fascicoli: {}, UDIENZE: {}, mandati: {}, vittime: {}, documenti: {}, ultimoAggiornamento: null };
-    }
-  };
-  const write = db => {
-    db.ultimoAggiornamento = new Date().toISOString();
-    fs.mkdirSync(dir, { recursive: true });
-    const tmp = `${file}.tmp`;
-    fs.writeFileSync(tmp, JSON.stringify(db, null, 2), "utf8");
-    fs.renameSync(tmp, file);
-  };
-  return { file, read, write };
+function dojLayout(title, body, active = "dashboard", user = "Giustizia") {
+  const dojNav = [
+    ["dashboard", "/doj", "Dashboard", "⌂"], ["casi", "/doj/casi", "Fascicoli e casi", "§"], ["mandati", "/doj/mandati", "Mandati", "◈"],
+    ["procura", "/doj/procura", "Procura", "⚖"], ["tribunale", "/doj/tribunale", "Tribunale", "▤"], ["vittime", "/doj/vittime", "Vittime e assistenza", "✚"],
+    ["documenti", "/doj/documenti", "Documenti legali", "▧"], ["audit", "/doj/audit", "Audit e controlli", "✓"]
+  ].map(([id, href, label, icon]) => `<a class="nav-item ${active === id ? "active" : ""}" href="${href}"><span class="nav-icon">${icon}</span><span>${label}</span></a>`).join("");
+  let html = pageLayout(title, body, active, user);
+  html = html.replace(/(<a href="\/doj" class="switch-item )([^"]*)/, "$1selected").replace(/(<a href="\/" class="switch-item )selected/, "$1");
+  html = html.replace(/<div class="brand">[\s\S]*?<\/div><div class="portal-switch">/, '<div class="brand"><div class="crest-group"><img class="crest" src="/ced-iprp-logo.png" alt="MPRP"><img class="crest-secondary" src="/minnesota-state-patrol.png" alt="MPRP Patrol"></div><div><strong>DOJ • GIUSTIZIA</strong><small>MPRP • Portale giudiziario</small></div></div><div class="portal-switch">');
+  html = html.replace(/<nav class="nav">[\s\S]*?<\/nav>/, `<nav class="nav">${dojNav}</nav>`);
+  html = html.replace(/<div class="content">/, '<div class="content doj-theme">');
+  return html;
 }
-
 function dojLoginPage(message = "") {
-  return `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Accesso • DOJ</title><style>
-  *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:#17130f;color:#f8f1e4;font-family:Georgia,ui-serif,serif}.box{width:min(450px,100%);background:#211b15;border:1px solid #6d593e;padding:34px;border-radius:8px;box-shadow:0 25px 70px #0008}.seal{width:100px;height:100px;border:2px solid #b89a5a;border-radius:50%;display:grid;place-items:center;margin:0 auto 20px;color:#d7bd78;font-weight:900;letter-spacing:.12em}.seal span{font-size:13px;text-align:center}.label{display:block;margin:15px 0 7px;color:#d7c7aa;font-size:13px}input{width:100%;padding:13px;border:1px solid #6d593e;background:#15110d;color:#fff;border-radius:4px;font:inherit}button{width:100%;margin-top:22px;padding:13px;border:0;background:#b89a5a;color:#1b160f;font-weight:800;border-radius:4px;cursor:pointer}.error{margin-top:15px;padding:10px;border:1px solid #9d4c42;background:#4a211d;color:#ffd5cf;border-radius:4px}.note{color:#a99980;font-size:12px;text-align:center;margin-top:18px}</style></head><body><form class="box" method="post" action="/doj-login"><div class="seal"><span>DOJ<br>JUSTICE</span></div><h1>Department of Justice</h1><p>Accesso riservato al portale della giustizia.</p>${message?`<div class="error">${escapeHtml(message)}</div>`:""}<label class="label">Nome utente</label><input name="username" autocomplete="username" required><label class="label">Password</label><input type="password" name="password" autocomplete="current-password" required><button>Accedi al DOJ</button><div class="note">Portale roleplay • Accesso riservato</div></form></body></html>`;
+  return loginPage(message)
+    .replace("Portale dei dipartimenti MPRP", "Portale DOJ • Giustizia MPRP")
+    .replace("Portale dei dipartimenti MPRP.", "Sistema giudiziario e legale MPRP.")
+    .replace("Accesso riservato", "Accesso • DOJ Giustizia");
 }
 
-function dojLayout(title, body, user, active = "home") {
-  const nav = [
-    ["home","/doj","Dashboard","▦"],["fascicoli","/doj/fascicoli","Fascicoli","§"],["udienze","/doj/udienze","Udienze","⚖"],["mandati","/doj/mandati","Mandati","⌕"],["vittime","/doj/vittime","Programma vittime","♡"],["documenti","/doj/documenti","Documenti ufficiali","▤"]
-  ].map(([id,href,label,icon])=>`<a class="doj-nav ${active===id?"active":""}" href="${href}"><span>${icon}</span>${label}</a>`).join("");
-  return `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)} • DOJ</title><style>
-  *{box-sizing:border-box}body{margin:0;background:#f3eee4;color:#211b15;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.doj-shell{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}.doj-side{background:#211b15;color:#f4ead7;padding:22px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}.doj-brand{padding:7px 8px 25px;border-bottom:1px solid #514433;margin-bottom:15px}.doj-seal{width:58px;height:58px;border:2px solid #b89a5a;border-radius:50%;display:grid;place-items:center;color:#d7bd78;font-size:9px;font-weight:900;text-align:center;margin-bottom:12px}.doj-brand strong{display:block;letter-spacing:.08em}.doj-brand small{color:#bba98b}.doj-nav{display:flex;gap:10px;align-items:center;color:#c9bba3;text-decoration:none;padding:11px 12px;border-radius:4px;margin:3px 0}.doj-nav:hover,.doj-nav.active{background:#3a3024;color:#fff;border-left:3px solid #b89a5a}.doj-bottom{margin-top:auto}.doj-content{padding:28px 34px;max-width:1500px;width:100%}.doj-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:24px}.doj-head h1{font-family:Georgia,serif;font-size:38px;margin:0}.doj-head p{color:#766a58}.doj-card{background:#fffdf8;border:1px solid #d8cdbb;border-radius:6px;padding:20px;box-shadow:0 7px 22px #5c493019}.doj-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}.s3{grid-column:span 3}.s4{grid-column:span 4}.s6{grid-column:span 6}.s8{grid-column:span 8}.s12{grid-column:span 12}.doj-stat{font-size:34px;font-weight:850;margin-top:7px;color:#4d3924}.muted{color:#7e735f}.doj-btn{display:inline-block;padding:10px 13px;background:#554127;color:#fff;text-decoration:none;border-radius:4px;border:0;cursor:pointer;font-weight:700}.doj-btn.gold{background:#b08d4d;color:#211b15}.doj-btn.red{background:#7d3128}.doj-form{display:grid;gap:11px}.doj-form label{font-size:13px;font-weight:700;color:#594c39}.doj-form input,.doj-form textarea,.doj-form select{width:100%;padding:11px;border:1px solid #cdbfa8;background:#fff;color:#241e16;border-radius:4px;font:inherit}.doj-form textarea{min-height:110px;resize:vertical}.doj-form button{justify-self:start}.doj-table{width:100%;border-collapse:collapse}.doj-table th,.doj-table td{padding:11px;border-bottom:1px solid #e2d9ca;text-align:left;vertical-align:top}.tag{display:inline-block;padding:4px 7px;border-radius:20px;background:#ece3d3;font-size:12px}.tag.low{background:#e8efe3}.tag.medium{background:#efe5c8}.tag.high{background:#f0d7d2}.notice{padding:11px 13px;background:#ece4d5;border-left:4px solid #b08d4d;margin-bottom:15px}.mobile{display:none}@media(max-width:900px){.doj-shell{grid-template-columns:1fr}.doj-side{position:relative;height:auto}.doj-nav{display:inline-flex}.doj-content{padding:20px}.s3,.s4,.s6,.s8{grid-column:span 12}.doj-head{display:block}.mobile{display:block}}
-</style></head><body><div class="doj-shell"><aside class="doj-side"><div class="doj-brand"><div class="doj-seal">DOJ<br>JUSTICE</div><strong>DEPARTMENT OF JUSTICE</strong><small>Portale della giustizia</small></div><nav>${nav}</nav><div class="doj-bottom"><div class="muted">Accesso: ${escapeHtml(user)}</div><a class="doj-nav" href="/doj-logout">↪ Esci</a><a class="doj-nav" href="/">⇆ Dipartimenti</a></div></aside><main class="doj-content">${body}</main></div></body></html>`;
+function initDojDb(file) {
+  try {
+    const db = JSON.parse(fs.readFileSync(file, "utf8"));
+    db.casi ||= {};
+    db.mandati ||= {};
+    db.procure ||= {};
+    db.udienze ||= {};
+    db.vittime ||= {};
+    db.documenti ||= {};
+    db.audit ||= [];
+    return db;
+  } catch {
+    return { casi: {}, mandati: {}, procure: {}, udienze: {}, vittime: {}, documenti: {}, audit: [], ultimoAggiornamento: null };
+  }
+}
+
+function saveDojDb(file, db) {
+  db.ultimoAggiornamento = new Date().toISOString();
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = `${file}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(db, null, 2), "utf8");
+  fs.renameSync(tmp, file);
 }
 
 function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChannelId = null }) {
@@ -275,33 +280,16 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
   app.get("/ced-iprp-logo.png", (req, res) => {
     res.sendFile(path.join(__dirname, "ced-iprp-logo.png"));
   });
+  app.get("/minnesota-state-patrol.png", (req, res) => {
+    res.sendFile(path.join(__dirname, "minnesota-state-patrol.png"));
+  });
 
   const expectedUser = process.env.PORTALE_USER || "fdo";
   const expectedPassword = process.env.PORTALE_PASSWORD || "";
-  const dojUser = process.env.DOJ_USER || "DOJ";
-  const dojPassword = process.env.DOJ_PASSWORD || "DOJ";
   const sessionSecret = process.env.PORTALE_SECRET || expectedPassword || crypto.randomBytes(32).toString("hex");
-  const dojStore = createDojStore(databaseFile);
-  const dojLogChannels = {
-    fascicoli: process.env.DOJ_FASCICOLI_CHANNEL_ID || process.env.DOJ_LOG_CHANNEL_ID,
-    udienze: process.env.DOJ_UDIENZE_CHANNEL_ID || process.env.DOJ_LOG_CHANNEL_ID,
-    mandati: process.env.DOJ_MANDATI_CHANNEL_ID || process.env.DOJ_LOG_CHANNEL_ID,
-    vittime: process.env.DOJ_VITTIME_CHANNEL_ID || process.env.DOJ_LOG_CHANNEL_ID,
-    documenti: process.env.DOJ_DOCUMENTI_CHANNEL_ID || process.env.DOJ_LOG_CHANNEL_ID
-  };
-  const sendDojLog = async (kind, title, description, fields = []) => {
-    if (!client || !dojLogChannels[kind]) return;
-    try {
-      const channel = await client.channels.fetch(dojLogChannels[kind]);
-      if (!channel?.isTextBased?.()) return;
-      const embed = new EmbedBuilder().setColor(0xb08d4d).setTitle(title).setDescription(description).addFields(fields).setTimestamp();
-      await channel.send({ embeds: [embed] });
-    } catch (error) { console.error("Errore log DOJ Discord:", error); }
-  };
-  const listEnvUsers = key => String(process.env[key] || dojUser).split(",").map(v => v.trim()).filter(Boolean);
-  const canDojRole = (user, key) => listEnvUsers(key).some(v => sameText(v, user));
 
   const operationsDir = path.join(path.dirname(databaseFile), "operazioni-elaborate");
+  const dojDatabaseFile = path.join(path.dirname(databaseFile), "mprp_doj.json");
 
   const claimOperation = operationId => {
     if (!operationId || !/^[a-zA-Z0-9_-]{12,100}$/.test(String(operationId))) return false;
@@ -385,29 +373,13 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
     if (!safeEqual(username, expectedUser) || !safeEqual(password, expectedPassword)) {
       return res.status(401).send(loginPage("Credenziali non valide."));
     }
-    const token = createSession({ name: username, area: "dipartimenti" }, sessionSecret);
+    const token = createSession(username, sessionSecret);
     // Il flag Secure è obbligatorio solo con HTTPS. In sviluppo locale il
     // browser usa HTTP, quindi il cookie deve restare leggibile su localhost.
     const secureCookie = process.env.PORTALE_HTTPS === "true" ? "; Secure" : "";
     res.setHeader("Set-Cookie", `iprp_session=${encodeURIComponent(token)}; Path=/; HttpOnly${secureCookie}; SameSite=Lax; Max-Age=43200`);
     return res.redirect("/");
   });
-  app.get("/doj-login", (req, res) => res.send(dojLoginPage()));
-  app.post("/doj-login", (req, res) => {
-    const username = String(req.body.username || "");
-    const password = String(req.body.password || "");
-    if (!safeEqual(username, dojUser) || !safeEqual(password, dojPassword)) return res.status(401).send(dojLoginPage("Credenziali DOJ non valide."));
-    const token = createSession({ name: username, area: "doj" }, sessionSecret);
-    const secureCookie = process.env.PORTALE_HTTPS === "true" ? "; Secure" : "";
-    res.setHeader("Set-Cookie", `iprp_session=${encodeURIComponent(token)}; Path=/; HttpOnly${secureCookie}; SameSite=Lax; Max-Age=43200`);
-    return res.redirect("/doj");
-  });
-  app.get("/doj-logout", (req, res) => {
-    const secureCookie = process.env.PORTALE_HTTPS === "true" ? "; Secure" : "";
-    res.setHeader("Set-Cookie", `iprp_session=; Path=/; HttpOnly${secureCookie}; SameSite=Lax; Max-Age=0`);
-    res.redirect("/doj-login");
-  });
-
   app.get("/logout", (req, res) => {
     const secureCookie = process.env.PORTALE_HTTPS === "true" ? "; Secure" : "";
     res.setHeader("Set-Cookie", `iprp_session=; Path=/; HttpOnly${secureCookie}; SameSite=Lax; Max-Age=0`);
@@ -415,17 +387,9 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
   });
 
   app.use((req, res, next) => {
-    if (req.method === "GET" && req.path === "/doj/udienze") { req.portalUser = "Pubblico"; req.portalArea = "doj-public"; return next(); }
     const session = verifySession(cookieParse(req.headers.cookie).iprp_session, sessionSecret);
     if (!session) return res.redirect(`/login?next=${encodeURIComponent(req.originalUrl)}`);
-    req.portalUser = session.user?.name || session.user;
-    req.portalArea = session.user?.area || "dipartimenti";
-    next();
-  });
-
-  app.use((req, res, next) => {
-    if (req.path.startsWith("/doj") && req.path !== "/doj-login" && !(req.path === "/doj/udienze" && req.method === "GET") && req.portalArea !== "doj") return res.redirect("/doj-login");
-    if (!req.path.startsWith("/doj") && req.portalArea === "doj") return res.redirect("/doj");
+    req.portalUser = session.user;
     next();
   });
 
@@ -520,7 +484,7 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
       id: generateRecordId("MUL"), userId: id, nome: d.nome, cognome: d.cognome,
       reato: String(req.body.reato || "").trim(), importo,
       descrizione: String(req.body.descrizione || "").trim(), agente: String(req.body.agente || "").trim(),
-      agentePortale: req.portalUser, origine: "PORTALE_FDO", stato: "PENDENTE", creataIl: new Date().toISOString(), pagataIl: null
+      agentePortale: req.portalUser, origine: "PORTALE_Dipartimento", stato: "PENDENTE", creataIl: new Date().toISOString(), pagataIl: null
     };
     db.multe[fine.id] = fine;
     user.multe ||= [];
@@ -581,7 +545,7 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
       cittaResidenza: String(req.body.cittaResidenza || "").trim(), eta: age,
       numeroTelefono: String(req.body.numeroTelefono || "").trim(), reati: String(req.body.reati || "").trim(),
       descrizioneAccaduto: String(req.body.descrizioneAccaduto || "").trim(), firmaAgente: String(req.body.firmaAgente || "").trim(),
-      agentePortale: req.portalUser, origine: "PORTALE_FDO", data: formatDate(now), dataEventoTimestamp: now,
+      agentePortale: req.portalUser, origine: "PORTALE_Dipartimento", data: formatDate(now), dataEventoTimestamp: now,
       registratoIl: new Date(now).toISOString(), registratoTimestamp: now
     };
     db.arresti[arrest.id] = arrest;
@@ -668,45 +632,87 @@ function startFdoPortal({ databaseFile, port = 3000, client = null, arrestsChann
   });
 
 
-  app.get("/doj", (req, res) => {
-    const db = dojStore.read();
-    const counts = [Object.keys(db.fascicoli).length,Object.keys(db.UDIENZE).length,Object.keys(db.mandati).length,Object.keys(db.vittime).length,Object.keys(db.documenti).length];
-    const body = `<div class="doj-head"><div><h1>Department of Justice</h1><p>Centro operativo della giustizia: fascicoli, udienze, mandati e tutela delle vittime.</p></div></div><div class="doj-grid">
-      <div class="doj-card s3"><div class="muted">Fascicoli</div><div class="doj-stat">${counts[0]}</div></div><div class="doj-card s3"><div class="muted">Udienze</div><div class="doj-stat">${counts[1]}</div></div><div class="doj-card s3"><div class="muted">Mandati</div><div class="doj-stat">${counts[2]}</div></div><div class="doj-card s3"><div class="muted">Soggetti vittima</div><div class="doj-stat">${counts[3]}</div></div>
-      <div class="doj-card s8"><h2>Operatività DOJ</h2><p class="muted">Le operazioni effettuate dal portale possono essere registrate nei canali Discord DOJ configurati nel servizio.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="doj-btn" href="/doj/fascicoli">Fascicoli</a><a class="doj-btn" href="/doj/udienze">Udienze</a><a class="doj-btn" href="/doj/mandati">Mandati</a><a class="doj-btn" href="/doj/vittime">Programma vittime</a></div></div>
-      <div class="doj-card s4"><h2>Documenti ufficiali</h2><p class="muted">Gestione riservata al titolare autorizzato.</p><a class="doj-btn gold" href="/doj/documenti">Apri archivio</a></div>
-    </div>`;
-    res.send(dojLayout("Dashboard", body, req.portalUser, "home"));
+  // ===== DOJ / GIUSTIZIA =====
+  const dojAuth = (req, res, next) => next();
+
+  app.get("/doj", dojAuth, (req, res) => {
+    const db = initDojDb(dojDatabaseFile);
+    const cases = Object.values(db.casi); const warrants = Object.values(db.mandati); const hearings = Object.values(db.udienze); const victims = Object.values(db.vittime);
+    const openCases = cases.filter(c => c.stato !== "CHIUSO").length;
+    const activeWarrants = warrants.filter(w => w.stato === "ATTIVO").length;
+    const upcoming = hearings.filter(h => new Date(h.data) >= new Date()).sort((a,b)=>new Date(a.data)-new Date(b.data)).slice(0,5);
+    const recent = cases.sort((a,b)=>new Date(b.creatoIl)-new Date(a.creatoIl)).slice(0,5).map(c => `<div class="record"><h3>${escapeHtml(c.id)} <span class="status ${c.stato === "CHIUSO" ? "ok" : "warn"}">${escapeHtml(c.stato)}</span></h3><p><strong>${escapeHtml(c.titolo)}</strong> • ${escapeHtml(c.divisione || "Criminal")}</p><p class="subtle">${escapeHtml(c.responsabile || "Assegnazione in corso")} • ${formatDate(c.creatoIl)}</p></div>`).join("") || '<div class="empty">Nessun fascicolo registrato.</div>';
+    const hearingCards = upcoming.map(h => `<div class="record"><h3>${escapeHtml(h.aula || "Aula federale")} • ${escapeHtml(h.tipo || "Udienza")}</h3><p><strong>${escapeHtml(h.caso || "Nessun fascicolo")}</strong> • ${formatDate(h.data)}</p><p>${escapeHtml(h.giudice || "Giudice assegnato")}</p></div>`).join("") || '<div class="empty">Nessuna udienza programmata.</div>';
+    const body = `<div class="topbar"><div><h1>Department of Justice</h1><p>Centro operativo per giustizia, procure, fascicoli e procedimenti MPRP.</p></div><div class="live"><span class="dot"></span> Sistema giudiziario operativo</div></div>
+      <div class="grid">
+        <div class="card stat-card span-3"><div class="label">Fascicoli aperti</div><div class="stat accent-blue">${openCases}</div></div>
+        <div class="card stat-card span-3"><div class="label">Mandati attivi</div><div class="stat accent-red">${activeWarrants}</div></div>
+        <div class="card stat-card span-3"><div class="label">Udienze</div><div class="stat accent-yellow">${hearings.length}</div></div>
+        <div class="card stat-card span-3"><div class="label">Vittime assistite</div><div class="stat accent-green">${victims.length}</div></div>
+        <div class="card span-7"><div class="section-head"><h2>Funzioni del Dipartimento</h2><span class="subtle">Struttura operativa</span></div><div class="kv"><div><small>Criminal Division</small>Indagini e procedimenti penali</div><div><small>Civil Division</small>Contenzioso e tutela del governo</div><div><small>U.S. Attorneys</small>Procure e rappresentanza in giudizio</div><div><small>National Security</small>Fascicoli a rilevanza nazionale</div><div><small>Victim Services</small>Supporto e presa in carico</div><div><small>Legal Policy</small>Pareri, direttive e documentazione</div></div></div>
+        <div class="card span-5"><div class="section-head"><h2>Accesso rapido</h2></div><div class="actions" style="display:grid;grid-template-columns:1fr 1fr"><a class="button" href="/doj/casi">Nuovo fascicolo</a><a class="button secondary" href="/doj/mandati">Mandati</a><a class="button secondary" href="/doj/procura">Procura</a><a class="button secondary" href="/doj/documenti">Documenti</a></div></div>
+        <div class="card span-7"><div class="section-head"><h2>Fascicoli recenti</h2><a class="button secondary" href="/doj/casi">Tutti i casi</a></div>${recent}</div>
+        <div class="card span-5"><div class="section-head"><h2>Prossime udienze</h2><a class="button secondary" href="/doj/tribunale">Calendario</a></div>${hearingCards}</div>
+      </div>`;
+    res.send(dojLayout("DOJ • Dashboard", body, "dashboard", req.portalUser));
   });
 
-  app.get("/doj/fascicoli", (req,res)=>{
-    const db=dojStore.read();
-    const rows=Object.values(db.fascicoli).sort((a,b)=>new Date(b.creatoIl)-new Date(a.creatoIl)).map(f=>`<tr><td><strong>${escapeHtml(f.id)}</strong></td><td>${escapeHtml(f.titolo)}</td><td>${escapeHtml(f.avvocato)}</td><td>${escapeHtml(f.stato)}</td><td>${formatDate(f.creatoIl)}</td></tr>`).join("")||'<tr><td colspan="5">Nessun fascicolo.</td></tr>';
-    const can=canDojRole(req.portalUser,"DOJ_ATTORNEY_USERS");
-    const form=can?`<form class="doj-form" method="post" action="/doj/fascicoli"><label>Titolo<input name="titolo" required maxlength="120"></label><label>Cliente / soggetto<input name="soggetto" required maxlength="120"></label><label>Avvocato<input name="avvocato" required maxlength="120"></label><label>Descrizione<textarea name="descrizione"></textarea></label><button class="doj-btn" type="submit">Crea fascicolo</button></form>`:`<p class="muted">Solo un avvocato DOJ può creare un fascicolo.</p>`;
-    const body=`<div class="doj-head"><div><h1>Fascicoli</h1><p>Archivio riservato al DOJ e alla magistratura autorizzata.</p></div></div><div class="doj-grid"><div class="doj-card s4"><h2>Nuovo fascicolo</h2>${form}</div><div class="doj-card s8"><h2>Archivio fascicoli</h2><table class="doj-table"><thead><tr><th>ID</th><th>Titolo</th><th>Avvocato</th><th>Stato</th><th>Creato</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
-    res.send(dojLayout("Fascicoli",body,req.portalUser,"fascicoli"));
+  app.get("/doj/casi", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const q=String(req.query.q||"").toLowerCase().trim();
+    const cases=Object.values(db.casi).filter(c=>!q||`${c.id} ${c.titolo} ${c.responsabile} ${c.divisione} ${c.soggetti}`.toLowerCase().includes(q)).sort((a,b)=>new Date(b.creatoIl)-new Date(a.creatoIl));
+    const rows=cases.map(c=>`<tr><td class="mono">${escapeHtml(c.id)}</td><td><strong>${escapeHtml(c.titolo)}</strong><br><span class="subtle">${escapeHtml(c.divisione||"Criminal")}</span></td><td>${escapeHtml(c.responsabile||"-")}</td><td><span class="status ${c.stato==="CHIUSO"?"ok":"warn"}">${escapeHtml(c.stato)}</span></td><td>${formatDate(c.creatoIl)}</td></tr>`).join("");
+    const body=`<div class="topbar"><div><h1>Fascicoli e casi</h1><p>Registro centrale dei procedimenti del DOJ.</p></div><div class="live">${cases.length} fascicoli</div></div><div class="card"><form class="search"><input class="input" name="q" value="${escapeHtml(req.query.q||"")}" placeholder="ID, titolo, divisione o responsabile"><button>Cerca</button></form><div class="table-wrap" style="margin-top:15px">${rows?`<table><thead><tr><th>ID</th><th>Fascicolo</th><th>Responsabile</th><th>Stato</th><th>Apertura</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">Nessun fascicolo trovato.</div>'}</div></div>`;
+    res.send(dojLayout("DOJ • Fascicoli",body,"casi",req.portalUser));
   });
-  app.post("/doj/fascicoli",(req,res)=>{if(!canDojRole(req.portalUser,"DOJ_ATTORNEY_USERS"))return res.status(403).send(dojLayout("Accesso negato",'<div class="doj-card"><h1>Non autorizzato</h1></div>',req.portalUser,"fascicoli"));const db=dojStore.read();const id=generateRecordId("FAS");const rec={id,titolo:String(req.body.titolo||"").trim(),soggetto:String(req.body.soggetto||"").trim(),avvocato:String(req.body.avvocato||"").trim(),descrizione:String(req.body.descrizione||"").trim(),stato:"APERTO",creatoIl:new Date().toISOString(),creatoDa:req.portalUser};if(!rec.titolo||!rec.soggetto||!rec.avvocato)return res.status(400).send(dojLayout("Errore",'<div class="doj-card"><h1>Dati incompleti</h1></div>',req.portalUser,"fascicoli"));db.fascicoli[id]=rec;dojStore.write(db);void sendDojLog("fascicoli","Nuovo fascicolo DOJ",`Creato il fascicolo ${id}.`,[{name:"Titolo",value:rec.titolo},{name:"Avvocato",value:rec.avvocato},{name:"Soggetto",value:rec.soggetto}]);res.redirect("/doj/fascicoli");});
 
-  app.get("/doj/udienze",(req,res)=>{const db=dojStore.read();const rows=Object.values(db.UDIENZE).sort((a,b)=>new Date(a.data)-new Date(b.data)).map(u=>`<tr><td>${escapeHtml(u.id)}</td><td>${escapeHtml(u.data)}</td><td>${escapeHtml(u.aula)}</td><td>${escapeHtml(u.caso)}</td><td>${escapeHtml(u.giudice)}</td></tr>`).join("")||'<tr><td colspan="5">Nessuna udienza programmata.</td></tr>';const can=canDojRole(req.portalUser,"DOJ_JUDGE_USERS");const form=can?`<form class="doj-form" method="post" action="/doj/udienze"><label>Data e ora<input type="datetime-local" name="data" required></label><label>Aula<input name="aula" required></label><label>Procedimento<input name="caso" required></label><label>Giudice<input name="giudice" required></label><button class="doj-btn" type="submit">Programma</button></form>`:`<p class="muted">Solo un giudice può programmare un'udienza.</p>`;const body=`<div class="doj-head"><div><h1>Udienze</h1><p>Calendario delle udienze. La programmazione è una funzione giudiziaria.</p></div></div><div class="doj-grid"><div class="doj-card s4"><h2>Programma udienza</h2>${form}</div><div class="doj-card s8"><table class="doj-table"><thead><tr><th>ID</th><th>Data</th><th>Aula</th><th>Procedimento</th><th>Giudice</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;res.send(dojLayout("Udienze",body,req.portalUser,"udienze"));});
-  app.post("/doj/udienze",(req,res)=>{if(!canDojRole(req.portalUser,"DOJ_JUDGE_USERS"))return res.status(403).send(dojLayout("Accesso negato",'<div class="doj-card"><h1>Solo un giudice può programmare udienze.</h1></div>',req.portalUser,"udienze"));const db=dojStore.read();const id=generateRecordId("UD");const rec={id,data:String(req.body.data||""),aula:String(req.body.aula||"").trim(),caso:String(req.body.caso||"").trim(),giudice:String(req.body.giudice||"").trim(),creatoIl:new Date().toISOString(),creatoDa:req.portalUser};db.UDIENZE[id]=rec;dojStore.write(db);void sendDojLog("udienze","Nuova udienza programmata",`Udienza ${id} programmata.`,[{name:"Data",value:rec.data},{name:"Aula",value:rec.aula},{name:"Giudice",value:rec.giudice}]);res.redirect("/doj/udienze");});
+  app.get("/doj/mandati", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const q=String(req.query.q||"").toLowerCase().trim();
+    const warrants=Object.values(db.mandati).filter(w=>!q||`${w.id} ${w.soggetto} ${w.tipo} ${w.caso}`.toLowerCase().includes(q)).sort((a,b)=>new Date(b.emessoIl)-new Date(a.emessoIl));
+    const cards=warrants.map(w=>`<div class="record"><h3>${escapeHtml(w.id)} <span class="status ${w.stato==="ATTIVO"?"bad":"ok"}">${escapeHtml(w.stato)}</span></h3><p><strong>Soggetto:</strong> ${escapeHtml(w.soggetto)} • <strong>Tipo:</strong> ${escapeHtml(w.tipo)}</p><p><strong>Fascicolo:</strong> ${escapeHtml(w.caso||"-")} • <strong>Emesso:</strong> ${formatDate(w.emessoIl)}</p><p>${escapeHtml(w.note||"Nessuna annotazione.")}</p></div>`).join("")||'<div class="empty">Nessun mandato registrato.</div>';
+    const body=`<div class="topbar"><div><h1>Mandati e ordini</h1><p>Controllo degli ordini giudiziari e del loro stato.</p></div><div class="live">${warrants.length} risultati</div></div><div class="card"><form class="search"><input class="input" name="q" value="${escapeHtml(req.query.q||"")}" placeholder="ID, soggetto, tipo o fascicolo"><button>Cerca</button></form><div style="margin-top:16px">${cards}</div></div>`;
+    res.send(dojLayout("DOJ • Mandati",body,"mandati",req.portalUser));
+  });
 
-  app.get("/doj/mandati",(req,res)=>{const db=dojStore.read();const rows=Object.values(db.mandati).sort((a,b)=>new Date(b.creatoIl)-new Date(a.creatoIl)).map(m=>`<tr><td>${escapeHtml(m.id)}</td><td>${escapeHtml(m.tipo)}</td><td>${escapeHtml(m.soggetto)}</td><td>${escapeHtml(m.autorita)}</td><td>${formatDate(m.creatoIl)}</td></tr>`).join("")||'<tr><td colspan="5">Nessun mandato.</td></tr>';const can=canDojRole(req.portalUser,"DOJ_PROSECUTOR_USERS")||canDojRole(req.portalUser,"DOJ_JUDGE_USERS");const form=can?`<form class="doj-form" method="post" action="/doj/mandati"><label>Tipo<select name="tipo"><option>Arresto</option><option>Perquisizione</option><option>Comparizione</option></select></label><label>Soggetto<input name="soggetto" required></label><label>Autorità emittente<input name="autorita" required></label><label>Motivazione<textarea name="motivazione"></textarea></label><button class="doj-btn red" type="submit">Crea mandato</button></form>`:`<p class="muted">Solo un procuratore o un giudice può creare un mandato.</p>`;const body=`<div class="doj-head"><div><h1>Mandati e ordini</h1><p>Registro dei mandati del DOJ.</p></div></div><div class="doj-grid"><div class="doj-card s4"><h2>Emetti mandato</h2>${form}</div><div class="doj-card s8"><table class="doj-table"><thead><tr><th>ID</th><th>Tipo</th><th>Soggetto</th><th>Autorità</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;res.send(dojLayout("Mandati",body,req.portalUser,"mandati"));});
-  app.post("/doj/mandati",(req,res)=>{if(!(canDojRole(req.portalUser,"DOJ_PROSECUTOR_USERS")||canDojRole(req.portalUser,"DOJ_JUDGE_USERS")))return res.status(403).send(dojLayout("Accesso negato",'<div class="doj-card"><h1>Solo procuratore o giudice.</h1></div>',req.portalUser,"mandati"));const db=dojStore.read();const id=generateRecordId("MAN");const rec={id,tipo:String(req.body.tipo||""),soggetto:String(req.body.soggetto||"").trim(),autorita:String(req.body.autorita||"").trim(),motivazione:String(req.body.motivazione||"").trim(),creatoIl:new Date().toISOString(),creatoDa:req.portalUser};db.mandati[id]=rec;dojStore.write(db);void sendDojLog("mandati","Nuovo mandato DOJ",`Creato il mandato ${id}.`,[{name:"Tipo",value:rec.tipo},{name:"Soggetto",value:rec.soggetto},{name:"Autorità",value:rec.autorita}]);res.redirect("/doj/mandati");});
+  app.get("/doj/procura", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const prosecutors=Object.values(db.procure);
+    const cards=prosecutors.map(p=>`<div class="record"><h3>${escapeHtml(p.nome)} <span class="status ok">${escapeHtml(p.ruolo||"AUSA")}</span></h3><p><strong>Distretto:</strong> ${escapeHtml(p.distretto||"Minnesota")}</p><p><strong>Specialità:</strong> ${escapeHtml(p.specialita||"Criminal / Civil")}</p><p><strong>Fascicoli assegnati:</strong> ${escapeHtml(p.casi||0)}</p></div>`).join("")||'<div class="empty">Nessun procuratore configurato.</div>';
+    const body=`<div class="topbar"><div><h1>U.S. Attorney's Office</h1><p>Gestione della procura, assegnazioni e responsabilità sui fascicoli.</p></div><div class="live">${prosecutors.length} profili</div></div><div class="grid"><div class="card span-7">${cards}</div><div class="card span-5"><div class="section-head"><h2>Divisioni</h2></div><div class="record"><h3>Criminal</h3><p>Procedimenti penali, grandi reati e coordinamento investigativo.</p></div><div class="record"><h3>Civil</h3><p>Contenzioso, responsabilità pubblica e tutela degli interessi governativi.</p></div><div class="record"><h3>Appellate</h3><p>Ricorsi, memorie e attività davanti agli organi giudiziari.</p></div></div></div>`;
+    res.send(dojLayout("DOJ • Procura",body,"procura",req.portalUser));
+  });
 
-  app.get("/doj/vittime",(req,res)=>{const db=dojStore.read();const rows=Object.values(db.vittime).sort((a,b)=>new Date(b.creatoIl)-new Date(a.creatoIl)).map(v=>`<tr><td>${escapeHtml(v.id)}</td><td>${escapeHtml(v.soggetto)}</td><td><span class="tag ${v.importanza.toLowerCase()}">${escapeHtml(v.importanza)}</span></td><td>${escapeHtml(v.note)}</td><td>${formatDate(v.creatoIl)}</td></tr>`).join("")||'<tr><td colspan="5">Nessun soggetto inserito.</td></tr>';const can=canDojRole(req.portalUser,"DOJ_JUDGE_USERS");const form=can?`<form class="doj-form" method="post" action="/doj/vittime"><label>Soggetto<input name="soggetto" required></label><label>Importanza<select name="importanza"><option>Basso</option><option>Medio</option><option>Alto</option></select></label><label>Note<textarea name="note"></textarea></label><button class="doj-btn" type="submit">Aggiungi al programma</button></form>`:`<p class="muted">Solo un giudice può aggiungere un soggetto al programma vittime.</p>`;const body=`<div class="doj-head"><div><h1>Programma vittime</h1><p>Registro riservato per tutela e gestione dei soggetti.</p></div></div><div class="doj-grid"><div class="doj-card s4"><h2>Inserisci soggetto</h2>${form}</div><div class="doj-card s8"><table class="doj-table"><thead><tr><th>ID</th><th>Soggetto</th><th>Importanza</th><th>Note</th><th>Inserito</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;res.send(dojLayout("Programma vittime",body,req.portalUser,"vittime"));});
-  app.post("/doj/vittime",(req,res)=>{if(!canDojRole(req.portalUser,"DOJ_JUDGE_USERS"))return res.status(403).send(dojLayout("Accesso negato",'<div class="doj-card"><h1>Solo un giudice può modificare il programma vittime.</h1></div>',req.portalUser,"vittime"));const db=dojStore.read();const id=generateRecordId("VIT");const rec={id,soggetto:String(req.body.soggetto||"").trim(),importanza:String(req.body.importanza||"Basso"),note:String(req.body.note||"").trim(),creatoIl:new Date().toISOString(),creatoDa:req.portalUser};db.vittime[id]=rec;dojStore.write(db);void sendDojLog("vittime","Soggetto aggiunto al programma vittime",`Inserimento ${id}.`,[{name:"Soggetto",value:rec.soggetto},{name:"Importanza",value:rec.importanza}]);res.redirect("/doj/vittime");});
+  app.get("/doj/tribunale", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const hearings=Object.values(db.udienze).sort((a,b)=>new Date(a.data)-new Date(b.data));
+    const rows=hearings.map(h=>`<tr><td>${formatDate(h.data)}</td><td>${escapeHtml(h.aula||"-")}</td><td>${escapeHtml(h.tipo||"Udienza")}</td><td>${escapeHtml(h.caso||"-")}</td><td>${escapeHtml(h.giudice||"-")}</td><td><span class="status ${h.stato==="CONCLUSA"?"ok":"warn"}">${escapeHtml(h.stato||"PROGRAMMATA")}</span></td></tr>`).join("");
+    const body=`<div class="topbar"><div><h1>Tribunale e udienze</h1><p>Calendario operativo dei procedimenti giudiziari.</p></div><div class="live">${hearings.length} udienze</div></div><div class="card"><div class="table-wrap">${rows?`<table><thead><tr><th>Data</th><th>Aula</th><th>Tipo</th><th>Fascicolo</th><th>Giudice</th><th>Stato</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">Nessuna udienza programmata.</div>'}</div></div>`;
+    res.send(dojLayout("DOJ • Tribunale",body,"tribunale",req.portalUser));
+  });
 
-  app.get("/doj/documenti",(req,res)=>{const db=dojStore.read();const rows=Object.values(db.documenti).sort((a,b)=>new Date(b.creatoIl)-new Date(a.creatoIl)).map(d=>`<tr><td>${escapeHtml(d.id)}</td><td>${escapeHtml(d.titolo)}</td><td>${escapeHtml(d.tipo)}</td><td>${escapeHtml(d.autore)}</td><td>${formatDate(d.creatoIl)}</td></tr>`).join("")||'<tr><td colspan="5">Nessun documento ufficiale.</td></tr>';const allowed=safeEqual(String(req.portalUser||""),String(process.env.DOJ_DOCUMENTS_OWNER||dojUser));const form=allowed?`<div class="doj-card s4"><h2>Nuovo documento</h2><form class="doj-form" method="post" action="/doj/documenti"><label>Titolo<input name="titolo" required></label><label>Tipo<input name="tipo" required></label><label>Contenuto<textarea name="contenuto" required></textarea></label><button class="doj-btn gold">Pubblica documento ufficiale</button></form></div>`:`<div class="doj-card s4"><h2>Archivio ufficiale</h2><p>La pubblicazione è riservata al titolare autorizzato.</p></div>`;const body=`<div class="doj-head"><div><h1>Documenti ufficiali</h1><p>Archivio dei provvedimenti e documenti ufficiali.</p></div></div><div class="doj-grid">${form}<div class="doj-card s8"><table class="doj-table"><thead><tr><th>ID</th><th>Titolo</th><th>Tipo</th><th>Autore</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;res.send(dojLayout("Documenti ufficiali",body,req.portalUser,"documenti"));});
-  app.post("/doj/documenti",(req,res)=>{if(!safeEqual(String(req.portalUser||""),String(process.env.DOJ_DOCUMENTS_OWNER||dojUser)))return res.status(403).send(dojLayout("Accesso negato",'<div class="doj-card"><h1>Non autorizzato</h1><p>Solo il titolare può pubblicare documenti ufficiali.</p></div>',req.portalUser,"documenti"));const db=dojStore.read();const id=generateRecordId("DOC");const rec={id,titolo:String(req.body.titolo||"").trim(),tipo:String(req.body.tipo||"").trim(),contenuto:String(req.body.contenuto||"").trim(),autore:req.portalUser,creatoIl:new Date().toISOString()};db.documenti[id]=rec;dojStore.write(db);void sendDojLog("documenti","Documento ufficiale pubblicato",`Pubblicato il documento ${id}.`,[{name:"Titolo",value:rec.titolo},{name:"Tipo",value:rec.tipo}]);res.redirect("/doj/documenti");});
+  app.get("/doj/vittime", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const victims=Object.values(db.vittime); const cards=victims.map(v=>`<div class="record"><h3>${escapeHtml(v.id)} • ${escapeHtml(v.nome)}</h3><p><strong>Fascicolo:</strong> ${escapeHtml(v.caso||"-")} • <strong>Stato:</strong> ${escapeHtml(v.stato||"In carico")}</p><p><strong>Referente:</strong> ${escapeHtml(v.referente||"Victim Services")}</p><p>${escapeHtml(v.note||"Nessuna nota riservata.")}</p></div>`).join("")||'<div class="empty">Nessuna pratica vittime registrata.</div>';
+    const body=`<div class="topbar"><div><h1>Vittime e assistenza</h1><p>Registro delle prese in carico e dei servizi di supporto.</p></div><div class="live">${victims.length} pratiche</div></div><div class="card"><div class="notice">Area riservata: i dati devono essere trattati secondo le autorizzazioni interne e il principio di minima esposizione.</div>${cards}</div>`;
+    res.send(dojLayout("DOJ • Vittime",body,"vittime",req.portalUser));
+  });
+
+  app.get("/doj/documenti", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const docs=Object.values(db.documenti).sort((a,b)=>new Date(b.data)-new Date(a.data));
+    const rows=docs.map(d=>`<tr><td class="mono">${escapeHtml(d.id)}</td><td><strong>${escapeHtml(d.titolo)}</strong></td><td>${escapeHtml(d.tipo||"Atto")}</td><td>${escapeHtml(d.autore||"-")}</td><td>${formatDate(d.data)}</td><td><span class="status ok">${escapeHtml(d.stato||"ARCHIVIATO")}</span></td></tr>`).join("");
+    const body=`<div class="topbar"><div><h1>Documenti legali</h1><p>Direttive, ordini, pareri e documentazione dei procedimenti.</p></div><div class="live">${docs.length} documenti</div></div><div class="card"><div class="table-wrap">${rows?`<table><thead><tr><th>ID</th><th>Titolo</th><th>Tipo</th><th>Autore</th><th>Data</th><th>Stato</th></tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">Nessun documento archiviato.</div>'}</div></div>`;
+    res.send(dojLayout("DOJ • Documenti",body,"documenti",req.portalUser));
+  });
+
+  app.get("/doj/audit", (req,res) => {
+    const db=initDojDb(dojDatabaseFile); const logs=[...db.audit].sort((a,b)=>new Date(b.data)-new Date(a.data));
+    const cards=logs.map(l=>`<div class="record"><h3>${escapeHtml(l.azione||"Operazione")} <span class="status ok">${escapeHtml(l.esito||"OK")}</span></h3><p><strong>Operatore:</strong> ${escapeHtml(l.operatore||"Sistema")} • <strong>Data:</strong> ${formatDate(l.data)}</p><p>${escapeHtml(l.dettagli||"")}</p></div>`).join("")||'<div class="empty">Nessun evento di audit.</div>';
+    const body=`<div class="topbar"><div><h1>Audit e controlli</h1><p>Tracciabilità delle operazioni e supervisione degli accessi.</p></div><div class="live">${logs.length} eventi</div></div><div class="card">${cards}</div>`;
+    res.send(dojLayout("DOJ • Audit",body,"audit",req.portalUser));
+  });
 
   app.use((req, res) => {
     res.status(404).send(pageLayout("Pagina non trovata", '<div class="card"><h1>Pagina non trovata</h1><p class="subtle">Il collegamento richiesto non esiste. Torna alla dashboard.</p><a class="button" href="/">Dashboard</a></div>', "dashboard", req.portalUser));
   });
 
   const server = app.listen(port, "0.0.0.0", () => {
-    console.log(`✅ Portale FDO attivo sulla porta ${port}`);
+    console.log(`✅ Portale dei dipartimenti attivo sulla porta ${port}`);
   });
   return server;
 }

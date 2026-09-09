@@ -1,4 +1,4 @@
-# IPRP Bot + Portale FDO — uso locale con Visual Studio Code
+# MPRP Bot + Portale dipartimenti — uso locale con Visual Studio Code
 
 Questo progetto è configurato per essere eseguito in locale da Visual Studio Code. Non contiene configurazioni o istruzioni di pubblicazione cloud.
 
@@ -34,14 +34,16 @@ Il cookie di accesso funziona su `http://localhost`. Se in futuro pubblichi il p
 - Le immagini fornite sono state integrate nel portale come `ced-iprp-logo.png` e `minnesota-state-patrol.png`.
 
 
-## Portale DOJ
+## Portale DOJ • Giustizia
 
-Il portale usa lo stesso servizio web del portale dei dipartimenti e dispone di un accesso separato. Credenziali predefinite DOJ: **utente `DOJ` / password `DOJ`**. Puoi cambiarle con `DOJ_USER` e `DOJ_PASSWORD`.
+Il portale unico include anche una sezione DOJ/giustizia raggiungibile da `/doj`, con menu dedicato a:
+- Dashboard giudiziaria
+- Fascicoli e casi
+- Mandati e ordini
+- Procura / U.S. Attorney's Office
+- Tribunale e calendario udienze
+- Vittime e assistenza
+- Documenti legali
+- Audit e controlli
 
-Le funzioni DOJ includono fascicoli, udienze, mandati, programma vittime e documenti ufficiali. Le autorizzazioni operative sono configurabili con `DOJ_ATTORNEY_USERS`, `DOJ_JUDGE_USERS`, `DOJ_PROSECUTOR_USERS` e `DOJ_DOCUMENTS_OWNER`. Con la configurazione predefinita l'utente DOJ è abilitato a tutte le funzioni, così il portale è immediatamente utilizzabile nel roleplay.
-
-Per collegare le operazioni ai canali Discord imposta `DOJ_LOG_CHANNEL_ID` oppure i singoli `DOJ_FASCICOLI_CHANNEL_ID`, `DOJ_UDIENZE_CHANNEL_ID`, `DOJ_MANDATI_CHANNEL_ID`, `DOJ_VITTIME_CHANNEL_ID` e `DOJ_DOCUMENTI_CHANNEL_ID`.
-
-### Railway e persistenza
-
-Su Railway imposta `DATA_DIR=/var/data` **e monta un Railway Volume su `/var/data`**. Il database civile resta in `iprp_civili.json`; il database DOJ viene salvato in `doj_records.json`. Un aggiornamento del repository non sostituisce questi file perché sono fuori dal repository. Se il Volume viene mantenuto, i dati già presenti (ad esempio 17 cittadini e 8 patenti) restano dopo il deploy.
+I dati DOJ vengono mantenuti in `mprp_doj.json`, separati dal database civile MPRP. Il menu laterale permette di passare tra **Dipartimenti** e **DOJ • Giustizia** senza cambiare sito.
